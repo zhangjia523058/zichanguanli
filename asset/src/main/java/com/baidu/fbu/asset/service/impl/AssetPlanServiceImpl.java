@@ -1,0 +1,181 @@
+package com.baidu.fbu.asset.service.impl;
+
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.baidu.fbu.asset.dao.AssetDetailDao;
+import com.baidu.fbu.asset.dao.AssetPlanDao;
+import com.baidu.fbu.asset.entity.AssetPlan;
+import com.baidu.fbu.asset.service.AssetPlanService;
+import com.baidu.fbu.asset.util.IOUtil;
+import com.baidu.fbu.asset.util.PageUtil;
+import com.baidu.fbu.asset.util.Util;
+
+@Service("assetPlanService")
+@Transactional
+public class AssetPlanServiceImpl implements AssetPlanService {
+    @Resource
+    private AssetPlanDao assetPlanDao;
+
+    @Resource
+    private AssetDetailDao assetDetailDao;
+
+    public void add( AssetPlan assetPlan ) throws SQLException {
+        // 页面输入的 合同资产总额 的单位是 万元，所以需要转换一下
+        assetPlan.setTotalAmount(assetPlan.getTotalAmount().multiply(new BigDecimal(10000)));
+
+        // String uuid = UUID.randomUUID().toString();
+        String orderid = String.valueOf(System.currentTimeMillis())
+                                                + String.valueOf(new Random().nextInt(1000));
+        assetPlan.setId(orderid);
+        Date now = new Date();
+        assetPlan.setUpdatetime(now);
+        assetPlan.setCreatetime(now);
+        assetPlanDao.addByParam(assetPlan);
+    }
+
+    public void update(AssetPlan assetPlan) throws SQLException {
+        // 页面输入的 合同资产总额 的单位是 万元，所以需要转换一下
+        assetPlan.setTotalAmount(assetPlan.getTotalAmount().multiply(new BigDecimal(10000)));
+        assetPlan.setUpdatetime(new Date());
+        assetPlanDao.updateByParam(assetPlan);
+    }
+
+    public void deleteById( String id ) throws SQLException {
+        assetPlanDao.deleteById(id);
+    }
+
+    public AssetPlan findById( String id) throws SQLException {
+        AssetPlan assetPlan = (AssetPlan) assetPlanDao.findById(id);
+        // 页面输入的 合同资产总额 的单位是 万元，所以需要转换一下
+        assetPlan.setTotalAmount(assetPlan.getTotalAmount().divide(new BigDecimal(10000)));
+        return assetPlan;
+    }
+
+    /** 查询符合条件的记录的条数  */
+    public Long countByParam(AssetPlan assetPlan) throws SQLException {
+        return assetPlanDao.countByParam( assetPlan );
+    }
+
+    /** 查询符合条件的记录  */
+    public Map<String, Object> findByParam( AssetPlan assetPlan ) throws SQLException {
+        return findByParam( assetPlan, -1, -1 );      // -1, -1 表示 不分页查询，查询全部。分页查询的话，默认参数是 0, 10
+    }
+
+    /** 查询符合条件的记录，分页  */
+    public Map<String, Object> findByParam( AssetPlan assetPlan, int startRow, int pageSize ) throws SQLException {
+        //  查询符合条件的条数
+        long count = assetPlanDao.joinCountByParam(assetPlan);
+
+        Map<String, Object> map = IOUtil.beanToMap(assetPlan);
+        map.put( "startRow", startRow );
+        map.put( "pageSize", pageSize );
+
+        List<Object> list = assetPlanDao.joinFindByParam(map);
+
+        // 遍历结果集，根据 资产计划 的发行时间，更新 资产计划 的状态
+        List publishedAssetPlanList = findPublishedAssetPlans( list );
+
+        // 转换结果集中的 Date 类型的属性 为 字符串，否则 sf.json jar 转换成 JSONObject时 会报错
+        List keyList = Util.getArrayList();
+        keyList.add( "handoverDate" );
+        keyList.add( "publishDate" );
+        IOUtil.formatDateToStr(list, keyList);
+
+        // 格式化 totalAmount 的单位 为 万元
+        formatMoney(list, "totalAmount");
+
+        // 更新那些 已经到了发行日期的 计划的 计划状态
+        if ( publishedAssetPlanList.size() > 0 ) {
+            Map<String, Object> param = Util.getHashMap();
+            param.put("planStatus", 1);      // 计划状态       1=发行  2=撤销   0=待发行
+            param.put("idList", publishedAssetPlanList);
+            param.put("updatetime", new Date());
+            assetPlanDao.batchUpdateByParam( param );
+        }
+
+        Map<String, Object> result = Util.getHashMap();
+
+        result.put( "list", list );
+        result.put( "count", count );
+
+        if ( startRow > -1 && pageSize > -1 ) {  // startRow 默认是 0 ， pageSize 默认是  10
+            long howManyPages = PageUtil.calculateHowManyPages(count, pageSize);
+            result.put( "howManyPages", howManyPages );
+        }
+
+        // Util.print( startRow+" --- "+pageSize+" --- "+count +" --- ");
+        return result;
+    }
+
+    /**  格式化 金额的单位 为 万元 */
+    public void formatMoney(List<Object> list, String key) {
+        for (int i = 0; i < list.size(); i++) {
+            Map<String, Object> tempMap = (Map<String, Object>) list.get(i);
+            BigDecimal value = (BigDecimal) tempMap.get(key);
+            tempMap.put(key, value.divide(new BigDecimal(10000)));
+        }
+    }
+
+    /** 遍历结果集，根据 资产计划 的发行时间，找出哪些 资产计划 的状态需要更新为 已发行 */
+    public List<Object> findPublishedAssetPlans(List<Object> list) throws SQLException {
+        List<Object> publishedAssetPlanList = Util.getArrayList();  // 更新这个列表中的 资产计划 的状态 为 已发行
+
+        for (Iterator<Object> it = list.iterator(); it.hasNext();) {
+            Map<String, Object> result = (Map<String, Object>) it.next();
+
+            // 计划状态      0=待发行   1=已发行  2=撤销
+            if ((Integer) result.get("planStatus") == 0 && result.get("publishDate") != null) {
+                int isPublished = new Date().compareTo( (Date) result.get("publishDate"));
+
+                if (isPublished >= 0) {
+                    String apId = result.get("id").toString();
+
+                    // 判断这个资产计划中的 资产明细数量，如果是 0，那这个计划就不能发行
+                    Map param = Util.getHashMap();
+                    param.put("apId", apId);
+                    long numberOfAsset = assetDetailDao.countByParam(param);
+
+                    if (numberOfAsset > 0) {
+                        publishedAssetPlanList.add( apId );
+                        result.put("planStatus", 1);     // 计划状态   1=已发行  2=撤销 0=待发行
+                    }
+                }
+                // Util.print(  "========="+ publishedAssetPlanList );
+            }
+        }
+        return publishedAssetPlanList;
+    }
+
+    /** 撤销 未发行的 资产计划 */
+    public void cancel(String id) throws SQLException {
+        AssetPlan assetPlan = (AssetPlan) assetPlanDao.findById(id);
+
+        // 修改 计划状态
+        assetPlan.setPlanStatus((short) 2);   // 计划状态    2=撤销   0=待发行   1=发行
+        assetPlan.setUpdatetime(new Date());
+        assetPlanDao.updateByParam(assetPlan);
+
+        // 删除 资产计划 中的 资产
+        Map<String, Object> map = Util.getHashMap();
+        map.put( "apId", id );
+        map.put( "transferStatus", 0 );    // 更新 资产明细的状态   0 = 未转让   1 = 待转让   2 = 已转让
+        map.put( "updatetime", new Date() );
+        assetDetailDao.batchUpdateAssetDetailByAssetPlanId(map);
+    }
+
+    public List<AssetPlan> queryAllAssetPlanByManagerId(Integer managerId) throws SQLException {
+        return assetPlanDao.findByManageId(managerId);
+    }
+
+}

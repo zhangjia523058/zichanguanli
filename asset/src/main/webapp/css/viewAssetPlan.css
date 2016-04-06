@@ -1,0 +1,20 @@
+.tr-one {
+    height: 28px;
+    width: 920px;
+    margin: 0 auto;
+    margin-bottom: 10px;
+    text-align: left;
+}
+.tr-one  span {
+    float: left;
+    white-space: nowrap;
+}
+.tr-one  span label {
+    float: left;
+    width: 129px;
+    text-align: right;
+    padding: 6px 5px 0 0;
+    font-size: 13px;
+}
+
+

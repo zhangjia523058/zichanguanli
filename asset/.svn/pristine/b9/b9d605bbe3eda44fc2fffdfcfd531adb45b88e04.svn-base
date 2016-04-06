@@ -1,0 +1,901 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.baidu.fbu.asset.mapper.AssetDetailMapper" >
+
+  <resultMap id="BaseResultMap" type="com.baidu.fbu.asset.entity.AssetDetail" >
+    <id column="loan_id" property="loanId" jdbcType="VARCHAR" />
+    <result column="ap_id" property="apId" jdbcType="VARCHAR" />
+    <result column="transfer_status" property="transferStatus" jdbcType="SMALLINT" />
+    <result column="repay_status" property="repayStatus" jdbcType="CHAR" />
+    <result column="stage_no" property="stageNo" jdbcType="DECIMAL" />
+    <result column="credit_amount" property="creditAmount" jdbcType="DECIMAL" />
+    <result column="loan_rate" property="loanRate" jdbcType="DECIMAL" />
+    <result column="loan_principal_amount" property="loanPrincipalAmount" jdbcType="DECIMAL" />
+    <result column="transfer_principal_interest" property="transferPrincipalInterest" jdbcType="DECIMAL" />
+    <result column="repay_principal_interest" property="repayPrincipalInterest" jdbcType="DECIMAL" />
+    <result column="surplus_principal_amount" property="surplusPrincipalAmount" jdbcType="DECIMAL" />
+    <result column="loan_time" property="loanTime" jdbcType="DATE" />
+    <result column="due_date" property="dueDate" jdbcType="DATE" />
+    <result column="penalty_interest" property="penaltyInterest" jdbcType="DECIMAL" />
+    <result column="repay_plan_change" property="repayPlanChange" jdbcType="SMALLINT" />
+    <result column="guarantee_type" property="guaranteeType" jdbcType="VARCHAR" />
+    <result column="over_due_day" property="overDueDay" jdbcType="INTEGER" />
+    <result column="max_over_due_day" property="maxOverDueDay" jdbcType="INTEGER" />
+    <result column="history_max_amount" property="historyMaxAmount" jdbcType="DECIMAL" />
+    <result column="over_due_principal" property="overDuePrincipal" jdbcType="DECIMAL" />
+    <result column="over_due_interest" property="overDueInterest" jdbcType="DECIMAL" />
+    <result column="is_discount" property="isDiscount" jdbcType="SMALLINT" />
+    <result column="discount_base" property="discountBase" jdbcType="DECIMAL" />
+    <result column="discount_rate" property="discountRate" jdbcType="DECIMAL" />
+    <result column="amortisement_date" property="amortisementDate" jdbcType="DATE" />
+    <result column="amortisement_charge" property="amortisementCharge" jdbcType="DECIMAL" />
+    <result column="repay_penalty_interest" property="repayPenaltyInterest" jdbcType="DECIMAL" />
+    <result column="product_type" property="productType" jdbcType="VARCHAR" />
+    <result column="repay_type" property="repayType" jdbcType="VARCHAR" />
+    <result column="loan_amount" property="loanAmount" jdbcType="DECIMAL" />
+    <result column="loan_fee" property="loanFee" jdbcType="DECIMAL" />
+    <result column="repay_amount" property="repayAmount" jdbcType="DECIMAL" />
+    <result column="repay_fee" property="repayFee" jdbcType="DECIMAL" />
+    <result column="transferred_amount" property="transferredAmount" jdbcType="DECIMAL" />
+    <result column="transferred_fee" property="transferredFee" jdbcType="DECIMAL" />
+    <result column="merchant_id" property="merchantId" jdbcType="VARCHAR" />
+    <result column="customer_id" property="customerId" jdbcType="VARCHAR" />
+    <result column="corp_id" property="corpId" jdbcType="VARCHAR" />
+    <result column="createtime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="updatetime" property="updatetime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    loan_id, ap_id, transfer_status, repay_status, stage_no, credit_amount, loan_rate, 
+    loan_principal_amount, transfer_principal_interest, repay_principal_interest, surplus_principal_amount, 
+    loan_time, due_date, penalty_interest, repay_plan_change, guarantee_type, over_due_day, 
+    max_over_due_day, history_max_amount, over_due_principal, over_due_interest, is_discount, 
+    discount_base, discount_rate, amortisement_date, amortisement_charge, repay_penalty_interest, 
+    product_type, repay_type, loan_amount, loan_fee, repay_amount, repay_fee, transferred_amount, 
+    transferred_fee, merchant_id, customer_id, corp_id, createtime, updatetime
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_asset_detail
+    where loan_id = #{loanId,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from tbl_asset_detail
+    where loan_id = #{loanId,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="com.baidu.fbu.asset.entity.AssetDetail" >
+    insert into tbl_asset_detail (loan_id, ap_id, transfer_status, 
+      repay_status, stage_no, credit_amount, 
+      loan_rate, loan_principal_amount, transfer_principal_interest, 
+      repay_principal_interest, surplus_principal_amount, 
+      loan_time, due_date, penalty_interest, 
+      repay_plan_change, guarantee_type, over_due_day, 
+      max_over_due_day, history_max_amount, over_due_principal, 
+      over_due_interest, is_discount, discount_base, 
+      discount_rate, amortisement_date, amortisement_charge, 
+      repay_penalty_interest, product_type, repay_type, 
+      loan_amount, loan_fee, repay_amount, 
+      repay_fee, transferred_amount, transferred_fee, 
+      merchant_id, customer_id, corp_id, 
+      createtime, updatetime)
+    values (#{loanId,jdbcType=VARCHAR}, #{apId,jdbcType=VARCHAR}, #{transferStatus,jdbcType=SMALLINT}, 
+      #{repayStatus,jdbcType=CHAR}, #{stageNo,jdbcType=DECIMAL}, #{creditAmount,jdbcType=DECIMAL}, 
+      #{loanRate,jdbcType=DECIMAL}, #{loanPrincipalAmount,jdbcType=DECIMAL}, #{transferPrincipalInterest,jdbcType=DECIMAL}, 
+      #{repayPrincipalInterest,jdbcType=DECIMAL}, #{surplusPrincipalAmount,jdbcType=DECIMAL}, 
+      #{loanTime,jdbcType=DATE}, #{dueDate,jdbcType=DATE}, #{penaltyInterest,jdbcType=DECIMAL}, 
+      #{repayPlanChange,jdbcType=SMALLINT}, #{guaranteeType,jdbcType=VARCHAR}, #{overDueDay,jdbcType=INTEGER}, 
+      #{maxOverDueDay,jdbcType=INTEGER}, #{historyMaxAmount,jdbcType=DECIMAL}, #{overDuePrincipal,jdbcType=DECIMAL}, 
+      #{overDueInterest,jdbcType=DECIMAL}, #{isDiscount,jdbcType=SMALLINT}, #{discountBase,jdbcType=DECIMAL}, 
+      #{discountRate,jdbcType=DECIMAL}, #{amortisementDate,jdbcType=DATE}, #{amortisementCharge,jdbcType=DECIMAL}, 
+      #{repayPenaltyInterest,jdbcType=DECIMAL}, #{productType,jdbcType=VARCHAR}, #{repayType,jdbcType=VARCHAR}, 
+      #{loanAmount,jdbcType=DECIMAL}, #{loanFee,jdbcType=DECIMAL}, #{repayAmount,jdbcType=DECIMAL}, 
+      #{repayFee,jdbcType=DECIMAL}, #{transferredAmount,jdbcType=DECIMAL}, #{transferredFee,jdbcType=DECIMAL}, 
+      #{merchantId,jdbcType=VARCHAR}, #{customerId,jdbcType=VARCHAR}, #{corpId,jdbcType=VARCHAR}, 
+      #{createtime,jdbcType=TIMESTAMP}, #{updatetime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.baidu.fbu.asset.entity.AssetDetail" >
+    insert into tbl_asset_detail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="loanId != null" >
+        loan_id,
+      </if>
+      <if test="apId != null" >
+        ap_id,
+      </if>
+      <if test="transferStatus != null" >
+        transfer_status,
+      </if>
+      <if test="repayStatus != null" >
+        repay_status,
+      </if>
+      <if test="stageNo != null" >
+        stage_no,
+      </if>
+      <if test="creditAmount != null" >
+        credit_amount,
+      </if>
+      <if test="loanRate != null" >
+        loan_rate,
+      </if>
+      <if test="loanPrincipalAmount != null" >
+        loan_principal_amount,
+      </if>
+      <if test="transferPrincipalInterest != null" >
+        transfer_principal_interest,
+      </if>
+      <if test="repayPrincipalInterest != null" >
+        repay_principal_interest,
+      </if>
+      <if test="surplusPrincipalAmount != null" >
+        surplus_principal_amount,
+      </if>
+      <if test="loanTime != null" >
+        loan_time,
+      </if>
+      <if test="dueDate != null" >
+        due_date,
+      </if>
+      <if test="penaltyInterest != null" >
+        penalty_interest,
+      </if>
+      <if test="repayPlanChange != null" >
+        repay_plan_change,
+      </if>
+      <if test="guaranteeType != null" >
+        guarantee_type,
+      </if>
+      <if test="overDueDay != null" >
+        over_due_day,
+      </if>
+      <if test="maxOverDueDay != null" >
+        max_over_due_day,
+      </if>
+      <if test="historyMaxAmount != null" >
+        history_max_amount,
+      </if>
+      <if test="overDuePrincipal != null" >
+        over_due_principal,
+      </if>
+      <if test="overDueInterest != null" >
+        over_due_interest,
+      </if>
+      <if test="isDiscount != null" >
+        is_discount,
+      </if>
+      <if test="discountBase != null" >
+        discount_base,
+      </if>
+      <if test="discountRate != null" >
+        discount_rate,
+      </if>
+      <if test="amortisementDate != null" >
+        amortisement_date,
+      </if>
+      <if test="amortisementCharge != null" >
+        amortisement_charge,
+      </if>
+      <if test="repayPenaltyInterest != null" >
+        repay_penalty_interest,
+      </if>
+      <if test="productType != null" >
+        product_type,
+      </if>
+      <if test="repayType != null" >
+        repay_type,
+      </if>
+      <if test="loanAmount != null" >
+        loan_amount,
+      </if>
+      <if test="loanFee != null" >
+        loan_fee,
+      </if>
+      <if test="repayAmount != null" >
+        repay_amount,
+      </if>
+      <if test="repayFee != null" >
+        repay_fee,
+      </if>
+      <if test="transferredAmount != null" >
+        transferred_amount,
+      </if>
+      <if test="transferredFee != null" >
+        transferred_fee,
+      </if>
+      <if test="merchantId != null" >
+        merchant_id,
+      </if>
+      <if test="customerId != null" >
+        customer_id,
+      </if>
+      <if test="corpId != null" >
+        corp_id,
+      </if>
+      <if test="createtime != null" >
+        createtime,
+      </if>
+      <if test="updatetime != null" >
+        updatetime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="loanId != null" >
+        #{loanId,jdbcType=VARCHAR},
+      </if>
+      <if test="apId != null" >
+        #{apId,jdbcType=VARCHAR},
+      </if>
+      <if test="transferStatus != null" >
+        #{transferStatus,jdbcType=SMALLINT},
+      </if>
+      <if test="repayStatus != null" >
+        #{repayStatus,jdbcType=CHAR},
+      </if>
+      <if test="stageNo != null" >
+        #{stageNo,jdbcType=DECIMAL},
+      </if>
+      <if test="creditAmount != null" >
+        #{creditAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="loanRate != null" >
+        #{loanRate,jdbcType=DECIMAL},
+      </if>
+      <if test="loanPrincipalAmount != null" >
+        #{loanPrincipalAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="transferPrincipalInterest != null" >
+        #{transferPrincipalInterest,jdbcType=DECIMAL},
+      </if>
+      <if test="repayPrincipalInterest != null" >
+        #{repayPrincipalInterest,jdbcType=DECIMAL},
+      </if>
+      <if test="surplusPrincipalAmount != null" >
+        #{surplusPrincipalAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="loanTime != null" >
+        #{loanTime,jdbcType=DATE},
+      </if>
+      <if test="dueDate != null" >
+        #{dueDate,jdbcType=DATE},
+      </if>
+      <if test="penaltyInterest != null" >
+        #{penaltyInterest,jdbcType=DECIMAL},
+      </if>
+      <if test="repayPlanChange != null" >
+        #{repayPlanChange,jdbcType=SMALLINT},
+      </if>
+      <if test="guaranteeType != null" >
+        #{guaranteeType,jdbcType=VARCHAR},
+      </if>
+      <if test="overDueDay != null" >
+        #{overDueDay,jdbcType=INTEGER},
+      </if>
+      <if test="maxOverDueDay != null" >
+        #{maxOverDueDay,jdbcType=INTEGER},
+      </if>
+      <if test="historyMaxAmount != null" >
+        #{historyMaxAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="overDuePrincipal != null" >
+        #{overDuePrincipal,jdbcType=DECIMAL},
+      </if>
+      <if test="overDueInterest != null" >
+        #{overDueInterest,jdbcType=DECIMAL},
+      </if>
+      <if test="isDiscount != null" >
+        #{isDiscount,jdbcType=SMALLINT},
+      </if>
+      <if test="discountBase != null" >
+        #{discountBase,jdbcType=DECIMAL},
+      </if>
+      <if test="discountRate != null" >
+        #{discountRate,jdbcType=DECIMAL},
+      </if>
+      <if test="amortisementDate != null" >
+        #{amortisementDate,jdbcType=DATE},
+      </if>
+      <if test="amortisementCharge != null" >
+        #{amortisementCharge,jdbcType=DECIMAL},
+      </if>
+      <if test="repayPenaltyInterest != null" >
+        #{repayPenaltyInterest,jdbcType=DECIMAL},
+      </if>
+      <if test="productType != null" >
+        #{productType,jdbcType=VARCHAR},
+      </if>
+      <if test="repayType != null" >
+        #{repayType,jdbcType=VARCHAR},
+      </if>
+      <if test="loanAmount != null" >
+        #{loanAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="loanFee != null" >
+        #{loanFee,jdbcType=DECIMAL},
+      </if>
+      <if test="repayAmount != null" >
+        #{repayAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="repayFee != null" >
+        #{repayFee,jdbcType=DECIMAL},
+      </if>
+      <if test="transferredAmount != null" >
+        #{transferredAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="transferredFee != null" >
+        #{transferredFee,jdbcType=DECIMAL},
+      </if>
+      <if test="merchantId != null" >
+        #{merchantId,jdbcType=VARCHAR},
+      </if>
+      <if test="customerId != null" >
+        #{customerId,jdbcType=VARCHAR},
+      </if>
+      <if test="corpId != null" >
+        #{corpId,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.baidu.fbu.asset.entity.AssetDetail" >
+    update tbl_asset_detail
+    <set >
+      <if test="apId != null" >
+        ap_id = #{apId,jdbcType=VARCHAR},
+      </if>
+      <if test="transferStatus != null" >
+        transfer_status = #{transferStatus,jdbcType=SMALLINT},
+      </if>
+      <if test="repayStatus != null" >
+        repay_status = #{repayStatus,jdbcType=CHAR},
+      </if>
+      <if test="stageNo != null" >
+        stage_no = #{stageNo,jdbcType=DECIMAL},
+      </if>
+      <if test="creditAmount != null" >
+        credit_amount = #{creditAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="loanRate != null" >
+        loan_rate = #{loanRate,jdbcType=DECIMAL},
+      </if>
+      <if test="loanPrincipalAmount != null" >
+        loan_principal_amount = #{loanPrincipalAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="transferPrincipalInterest != null" >
+        transfer_principal_interest = #{transferPrincipalInterest,jdbcType=DECIMAL},
+      </if>
+      <if test="repayPrincipalInterest != null" >
+        repay_principal_interest = #{repayPrincipalInterest,jdbcType=DECIMAL},
+      </if>
+      <if test="surplusPrincipalAmount != null" >
+        surplus_principal_amount = #{surplusPrincipalAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="loanTime != null" >
+        loan_time = #{loanTime,jdbcType=DATE},
+      </if>
+      <if test="dueDate != null" >
+        due_date = #{dueDate,jdbcType=DATE},
+      </if>
+      <if test="penaltyInterest != null" >
+        penalty_interest = #{penaltyInterest,jdbcType=DECIMAL},
+      </if>
+      <if test="repayPlanChange != null" >
+        repay_plan_change = #{repayPlanChange,jdbcType=SMALLINT},
+      </if>
+      <if test="guaranteeType != null" >
+        guarantee_type = #{guaranteeType,jdbcType=VARCHAR},
+      </if>
+      <if test="overDueDay != null" >
+        over_due_day = #{overDueDay,jdbcType=INTEGER},
+      </if>
+      <if test="maxOverDueDay != null" >
+        max_over_due_day = #{maxOverDueDay,jdbcType=INTEGER},
+      </if>
+      <if test="historyMaxAmount != null" >
+        history_max_amount = #{historyMaxAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="overDuePrincipal != null" >
+        over_due_principal = #{overDuePrincipal,jdbcType=DECIMAL},
+      </if>
+      <if test="overDueInterest != null" >
+        over_due_interest = #{overDueInterest,jdbcType=DECIMAL},
+      </if>
+      <if test="isDiscount != null" >
+        is_discount = #{isDiscount,jdbcType=SMALLINT},
+      </if>
+      <if test="discountBase != null" >
+        discount_base = #{discountBase,jdbcType=DECIMAL},
+      </if>
+      <if test="discountRate != null" >
+        discount_rate = #{discountRate,jdbcType=DECIMAL},
+      </if>
+      <if test="amortisementDate != null" >
+        amortisement_date = #{amortisementDate,jdbcType=DATE},
+      </if>
+      <if test="amortisementCharge != null" >
+        amortisement_charge = #{amortisementCharge,jdbcType=DECIMAL},
+      </if>
+      <if test="repayPenaltyInterest != null" >
+        repay_penalty_interest = #{repayPenaltyInterest,jdbcType=DECIMAL},
+      </if>
+      <if test="productType != null" >
+        product_type = #{productType,jdbcType=VARCHAR},
+      </if>
+      <if test="repayType != null" >
+        repay_type = #{repayType,jdbcType=VARCHAR},
+      </if>
+      <if test="loanAmount != null" >
+        loan_amount = #{loanAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="loanFee != null" >
+        loan_fee = #{loanFee,jdbcType=DECIMAL},
+      </if>
+      <if test="repayAmount != null" >
+        repay_amount = #{repayAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="repayFee != null" >
+        repay_fee = #{repayFee,jdbcType=DECIMAL},
+      </if>
+      <if test="transferredAmount != null" >
+        transferred_amount = #{transferredAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="transferredFee != null" >
+        transferred_fee = #{transferredFee,jdbcType=DECIMAL},
+      </if>
+      <if test="merchantId != null" >
+        merchant_id = #{merchantId,jdbcType=VARCHAR},
+      </if>
+      <if test="customerId != null" >
+        customer_id = #{customerId,jdbcType=VARCHAR},
+      </if>
+      <if test="corpId != null" >
+        corp_id = #{corpId,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        createtime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatetime != null" >
+        updatetime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where loan_id = #{loanId,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="com.baidu.fbu.asset.entity.AssetDetail" >
+    update tbl_asset_detail
+    set ap_id = #{apId,jdbcType=VARCHAR},
+      transfer_status = #{transferStatus,jdbcType=SMALLINT},
+      repay_status = #{repayStatus,jdbcType=CHAR},
+      stage_no = #{stageNo,jdbcType=DECIMAL},
+      credit_amount = #{creditAmount,jdbcType=DECIMAL},
+      loan_rate = #{loanRate,jdbcType=DECIMAL},
+      loan_principal_amount = #{loanPrincipalAmount,jdbcType=DECIMAL},
+      transfer_principal_interest = #{transferPrincipalInterest,jdbcType=DECIMAL},
+      repay_principal_interest = #{repayPrincipalInterest,jdbcType=DECIMAL},
+      surplus_principal_amount = #{surplusPrincipalAmount,jdbcType=DECIMAL},
+      loan_time = #{loanTime,jdbcType=DATE},
+      due_date = #{dueDate,jdbcType=DATE},
+      penalty_interest = #{penaltyInterest,jdbcType=DECIMAL},
+      repay_plan_change = #{repayPlanChange,jdbcType=SMALLINT},
+      guarantee_type = #{guaranteeType,jdbcType=VARCHAR},
+      over_due_day = #{overDueDay,jdbcType=INTEGER},
+      max_over_due_day = #{maxOverDueDay,jdbcType=INTEGER},
+      history_max_amount = #{historyMaxAmount,jdbcType=DECIMAL},
+      over_due_principal = #{overDuePrincipal,jdbcType=DECIMAL},
+      over_due_interest = #{overDueInterest,jdbcType=DECIMAL},
+      is_discount = #{isDiscount,jdbcType=SMALLINT},
+      discount_base = #{discountBase,jdbcType=DECIMAL},
+      discount_rate = #{discountRate,jdbcType=DECIMAL},
+      amortisement_date = #{amortisementDate,jdbcType=DATE},
+      amortisement_charge = #{amortisementCharge,jdbcType=DECIMAL},
+      repay_penalty_interest = #{repayPenaltyInterest,jdbcType=DECIMAL},
+      product_type = #{productType,jdbcType=VARCHAR},
+      repay_type = #{repayType,jdbcType=VARCHAR},
+      loan_amount = #{loanAmount,jdbcType=DECIMAL},
+      loan_fee = #{loanFee,jdbcType=DECIMAL},
+      repay_amount = #{repayAmount,jdbcType=DECIMAL},
+      repay_fee = #{repayFee,jdbcType=DECIMAL},
+      transferred_amount = #{transferredAmount,jdbcType=DECIMAL},
+      transferred_fee = #{transferredFee,jdbcType=DECIMAL},
+      merchant_id = #{merchantId,jdbcType=VARCHAR},
+      customer_id = #{customerId,jdbcType=VARCHAR},
+      corp_id = #{corpId,jdbcType=VARCHAR},
+      createtime = #{createtime,jdbcType=TIMESTAMP},
+      updatetime = #{updatetime,jdbcType=TIMESTAMP}
+    where loan_id = #{loanId,jdbcType=VARCHAR}
+  </update>
+
+
+
+  <select id="selectSelective" resultMap="BaseResultMap"
+             parameterType="map" >
+    select <include refid="Base_Column_List" /> 
+    from tbl_asset_detail
+    <include refid="selectConditions" />
+    order by updatetime desc
+    <if test="startRow > -1 and pageSize > -1" >
+        limit #{startRow}, #{pageSize}
+    </if>
+  </select>
+
+<!-- <select id="countSelective" resultType="long"
+                 parameterType="com.baidu.fbu.asset.entity.AssetDetail" >
+    select count(*) from tbl_asset_detail
+    <include refid="selectConditions" />
+  </select> -->
+  
+  <select id="countSelective" resultType="long" parameterType="map" >
+    select count(*) from tbl_asset_detail
+   <include refid="selectConditions" />
+  </select>
+
+  <sql id="selectConditions" >
+      <where>
+        <if test="apId > 0 " >
+          and ap_id = #{ apId } and ( transfer_status = 1 or transfer_status = 2 )
+      </if>
+      <if test="apId == null and transferStatus > -1" >
+          and transfer_status = #{ transferStatus }
+      </if>
+      <if test="surplusPrincipalAmount > 0 " >
+          and surplus_principal_amount <![CDATA[ <= ]]> #{ surplusPrincipalAmount }
+      </if>
+      <if test="productType != null and productType != '' " >
+          and product_type like CONCAT('%', #{ productType }, '%')
+      </if>    
+      <if test="stageNo > 0 " >
+          and stage_no = #{ stageNo }
+      </if>
+      <if test="overDueDay > 0 " >
+          and ( over_due_day <![CDATA[ <= ]]> #{ overDueDay } or over_due_day is null )
+      </if>      
+      <if test="startDueDate != null and startDueDate != '' " >
+          and due_date <![CDATA[ >= ]]> #{ startDueDate }
+      </if>
+      <if test="endDueDate != null and endDueDate != '' " >
+          and due_date <![CDATA[ <= ]]> #{ endDueDate }
+      </if>      
+      <if test="idList != null " >
+          and 
+	     <foreach collection="idList" index="index" item="item" 
+	                   open="(" separator="or" close=")">
+	        repay_status = #{item} 
+	     </foreach>
+      </if>   
+    </where>
+  </sql>
+
+  <update id="batchUpdateByParam" parameterType="map" >
+    update tbl_asset_detail set
+	    ap_id = #{ apId },
+	    transfer_status = #{ transferStatus },
+	    updatetime = #{ updatetime }
+    where loan_id in
+    <foreach collection="idList" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+    </foreach>
+   </update>
+
+   <update id="batchUpdateByRelatedId" parameterType="map" >
+		update tbl_asset_detail set
+		    ap_id = '',
+		    transfer_status = #{ transferStatus }
+		where ap_id = #{ apId }
+   </update>
+
+   <update id="removeAssetDetailsNotBuyInAnAssetPlan" parameterType="map" >
+        update tbl_asset_detail set
+            ap_id = '',
+            transfer_status = 0,
+            updatetime = #{ updatetime }
+        where ap_id = #{ apId } and loan_id not in
+	    <foreach collection="idList" index="index" item="item" open="(" separator="," close=")">
+	        #{item}
+	    </foreach>
+   </update>
+
+   <update id="batchUpdateByLoanIds" parameterType="map" >
+    update tbl_asset_detail set
+        ap_id = #{ apId },
+        transfer_status = #{ transferStatus },
+        updatetime = #{ updatetime }
+    where loan_id in
+    <foreach collection="idList" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+    </foreach>
+   </update>
+   
+   <resultMap type="com.baidu.fbu.asset.entity.vo.AssetDetailVo" id="excelMap">
+    <result column="loan_id" property="loanId" jdbcType="VARCHAR"/>
+    <result column="stage_no" property="stageNo" jdbcType="DECIMAL"/>
+    <result column="product_type" property="productType" jdbcType="VARCHAR"/>
+    <result column="loan_time" property="loanTime" jdbcType="DATE"/>
+    <result column="credit_amount" property="creditAmount" jdbcType="DECIMAL"/>
+    <result column="loan_rate" property="loanRate" jdbcType="DECIMAL"/>
+    <result column="due_date" property="dueDate" jdbcType="DATE"/>
+    <result column="loan_principal_amount" property="loanPrincipalAmount" jdbcType="DECIMAL"/>
+    <result column="repay_principal_interest" property="repayPrincipalInterest" jdbcType="DECIMAL"/>
+    <result column="surplus_principal_amount" property="surplusPrincipalAmount" jdbcType="DECIMAL"/>
+    <result column="transfer_principal_interest" property="transferPrincipalInterest" jdbcType="DECIMAL"/>
+    <result column="penalty_interest" property="penaltyInterest" jdbcType="DECIMAL"/>
+    <result column="repay_penalty_interest" property="repayPenaltyInterest" jdbcType="DECIMAL"/>
+    <result column="repay_plan_change" property="repayPlanChange" jdbcType="SMALLINT"/>
+    <result column="repay_type" property="repayType" jdbcType="VARCHAR"/>
+    <result column="transfer_status" property="transferStatus" jdbcType="SMALLINT"/>
+    <result column="customer_name" property="customerName" jdbcType="VARCHAR"/>
+    <result column="customer_idcard" property="customerIdcard" jdbcType="VARCHAR"/>
+    <result column="customer_gender" property="customerGender" jdbcType="SMALLINT"/>
+    <result column="customer_age" property="customerAge" jdbcType="SMALLINT"/>
+    <result column="customer_degree" property="customerDegree" jdbcType="VARCHAR"/>
+    <result column="customer_profession" property="customerProfession" jdbcType="VARCHAR"/>
+    <result column="customer_area" property="customerArea" jdbcType="VARCHAR"/>
+    <result column="merchant_name" property="merchantName" jdbcType="VARCHAR"/>
+    <result column="merchant_branch_name" property="merchantBranchName" jdbcType="VARCHAR"/>
+    <result column="corp_name" property="corpName" jdbcType="VARCHAR"/>
+    <result column="guarantee_type" property="guaranteeType" jdbcType="VARCHAR"/>
+    <result column="over_due_day" property="overDueDay" jdbcType="INTEGER"/>
+    <result column="max_over_due_day" property="maxOverDueDay" jdbcType="INTEGER"/>
+    <result column="history_max_amount" property="historyMaxAmount" jdbcType="DECIMAL"/>
+    <result column="over_due_principal" property="overDuePrincipal" jdbcType="DECIMAL"/>
+    <result column="over_due_interest" property="overDueInterest" jdbcType="DECIMAL"/>
+    <result column="is_discount" property="isDiscount" jdbcType="SMALLINT"/>
+    <result column="discount_base" property="discountBase" jdbcType="DECIMAL"/>
+    <result column="discount_rate" property="discountRate" jdbcType="DECIMAL"/>
+    <result column="amortisement_date" property="amortisementDate" jdbcType="DATE"/>
+    <result column="amortisement_charge" property="amortisementCharge" jdbcType="DECIMAL"/>
+  </resultMap>
+  
+   <select id="exportAssets" 
+            parameterType="com.baidu.fbu.asset.entity.AssetDetail" 
+            resultMap="excelMap">
+        select 
+            t.loan_id, t.stage_no, t.product_type, t.loan_time, t.credit_amount, t.loan_rate, t.due_date, t.loan_principal_amount, 
+            t.repay_principal_interest, t.surplus_principal_amount, 
+            t.transfer_principal_interest, 
+            t.penalty_interest, t.repay_penalty_interest, t.repay_plan_change, 
+            t.repay_type, 
+            t.transfer_status, 
+            t.guarantee_type, t.over_due_day, t.max_over_due_day, t.history_max_amount, t.over_due_principal, t.over_due_interest, 
+            t.is_discount, t.discount_base, t.discount_rate, t.amortisement_date, t.amortisement_charge, 
+            c.name as customer_name, c.idcard as customer_idcard, c.gender as customer_gender, c.age as customer_age, 
+            c.degree as customer_degree, c.profession as customer_profession, c.area as customer_area, 
+            m.name as merchant_name, 
+            m.branch_name as merchant_branch_name, 
+            o.name as corp_name
+        from (select 
+            loan_id, stage_no, product_type, loan_time, credit_amount, loan_rate, due_date, loan_principal_amount, 
+            repay_principal_interest, surplus_principal_amount, 
+            transfer_principal_interest, 
+            penalty_interest, repay_penalty_interest, repay_plan_change, 
+            repay_type, 
+            transfer_status, 
+            guarantee_type, over_due_day, max_over_due_day, history_max_amount, over_due_principal, over_due_interest, 
+            is_discount, discount_base, discount_rate, amortisement_date, amortisement_charge, customer_id, merchant_id, corp_id
+        from tbl_asset_detail where ap_id = #{apId}) as t
+        left join tbl_customer as c on t.customer_id = c.customer_id 
+        left join tbl_merchant as m on t.merchant_id = m.merchant_id
+        left join tbl_corp as o on t.corp_id = o.corp_id;
+   </select>
+
+   
+   <resultMap id="CustomResultMap" type="map" >
+    <id column="loan_id" property="loanId" jdbcType="VARCHAR" />
+    <result column="ap_id" property="apId" jdbcType="VARCHAR" />
+    <result column="transfer_status" property="transferStatus" jdbcType="SMALLINT" />
+    <result column="stage_no" property="stageNo" jdbcType="DECIMAL" />
+    <result column="loan_time" property="loanTime" jdbcType="DATE" />
+    <result column="credit_amount" property="creditAmount" jdbcType="DECIMAL" />
+    <result column="loan_rate" property="loanRate" jdbcType="DECIMAL" />
+    <result column="loan_principal_amount" property="loanPrincipalAmount" jdbcType="DECIMAL" />
+    <result column="surplus_principal_amount" property="surplusPrincipalAmount" jdbcType="DECIMAL" />
+    <result column="transfer_principal_interest" property="transferPrincipalInterest" jdbcType="DECIMAL" />
+    <result column="due_date" property="dueDate" jdbcType="DATE" />
+    <result column="repay_status" property="repayStatus" jdbcType="CHAR" />
+    <result column="penalty_interest" property="penaltyInterest" jdbcType="DECIMAL" />
+    <result column="repay_plan_change" property="repayPlanChange" jdbcType="SMALLINT" />
+    <result column="repay_type" property="repayType" jdbcType="VARCHAR" />
+    <result column="guarantee_type" property="guaranteeType" jdbcType="VARCHAR" />
+    <result column="over_due_day" property="overDueDay" jdbcType="INTEGER" />
+    <result column="max_over_due_day" property="maxOverDueDay" jdbcType="INTEGER" />
+    <result column="history_max_amount" property="historyMaxAmount" jdbcType="DECIMAL" />
+    <result column="over_due_principal" property="overDuePrincipal" jdbcType="DECIMAL" />
+    <result column="over_due_interest" property="overDueInterest" jdbcType="DECIMAL" />
+    <result column="is_discount" property="isDiscount" jdbcType="SMALLINT" />
+    <result column="discount_base" property="discountBase" jdbcType="DECIMAL" />
+    <result column="discount_rate" property="discountRate" jdbcType="DECIMAL" />
+    <result column="amortisement_date" property="amortisementDate" jdbcType="DATE" />
+    <result column="amortisement_charge" property="amortisementCharge" jdbcType="DECIMAL" />
+    <result column="repay_penalty_interest" property="repayPenaltyInterest" jdbcType="DECIMAL" />
+    <result column="product_type" property="productType" jdbcType="VARCHAR" />
+    <result column="repay_principal_interest" property="repayPrincipalInterest" jdbcType="DECIMAL" />
+
+    <result column="loan_amount" property="loanAmount" jdbcType="DECIMAL" />    
+    <result column="loan_fee" property="loanFee" jdbcType="DECIMAL" />
+    <result column="repay_amount" property="repayAmount" jdbcType="DECIMAL" />    
+    <result column="repay_fee" property="repayFee" jdbcType="DECIMAL" />
+    <result column="transferred_amount" property="transferredAmount" jdbcType="DECIMAL" />
+    <result column="transferred_fee" property="transferredFee" jdbcType="DECIMAL" />
+
+    <result column="createtime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="updatetime" property="updatetime" jdbcType="TIMESTAMP" />
+    
+    <result column="customer_id" property="customerId" jdbcType="VARCHAR" />
+    <result column="customer_name" property="customerName" jdbcType="VARCHAR" />    
+    <result column="idcard" property="idcard"  />    
+    <result column="age" property="age"  />    
+    <result column="degree" property="degree"  />    
+    <result column="profession" property="profession"  />    
+    <result column="area" property="area"  />
+    
+    <result column="merchant_id" property="merchantId" jdbcType="VARCHAR" />
+    <result column="merchant_name" property="merchantName" jdbcType="VARCHAR" />
+    <result column="merchant_branch_name" property="merchantBranchName" jdbcType="VARCHAR" />
+    
+    <result column="corp_id" property="corpId" jdbcType="VARCHAR" />
+    <result column="corp_name" property="corpName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Custom_Column_List" >
+    asset.loan_id, asset.ap_id, asset.transfer_status,  
+    asset.stage_no, asset.loan_time, asset.credit_amount, 
+    asset.loan_rate, asset.loan_principal_amount, asset.surplus_principal_amount,
+    asset.due_date, asset.repay_status, asset.repay_plan_change, 
+    asset.repay_type, asset.guarantee_type,
+    asset.over_due_day, asset.max_over_due_day, asset.history_max_amount, 
+    asset.over_due_principal, asset.over_due_interest,
+    asset.is_discount, asset.discount_base, asset.discount_rate, asset.amortisement_date, 
+    asset.amortisement_charge, asset.product_type, 
+    asset.transfer_principal_interest, asset.penalty_interest, 
+    asset.repay_penalty_interest, asset.repay_principal_interest, 
+    asset.loan_amount, asset.loan_fee,
+    asset.repay_amount, asset.repay_fee,
+    asset.transferred_amount, asset.transferred_fee,
+    asset.createtime, asset.updatetime,
+
+    cus.customer_id, 
+    cus.name as customer_name,
+    cus.idcard,
+    cus.gender,
+    cus.age,
+    cus.degree,
+    cus.profession,
+    cus.area,            
+            
+    mer.merchant_id,  
+    mer.name as merchant_name,
+    mer.branch_name as merchant_branch_name,
+    
+    corp.corp_id, 
+    corp.name as corp_name
+  </sql>
+  
+  <sql id="from_table" >
+      from tbl_asset_detail asset
+        left join tbl_merchant mer
+        on asset.merchant_id = mer.merchant_id
+        left join tbl_customer cus
+        on asset.customer_id = cus.customer_id
+        left join tbl_corp corp
+        on asset.corp_id = corp.corp_id
+  </sql>
+  
+  <sql id="orderBy_and_pager" >
+      order by asset.updatetime desc
+      <if test="startRow > -1 and pageSize > -1" >
+        limit #{startRow}, #{pageSize}
+      </if>
+  </sql>
+  
+  <select id="joinSelectSelective" resultMap="CustomResultMap" parameterType="map" >
+    select 
+    <include refid="Custom_Column_List" />
+    <include refid="from_table" />
+    <include refid="joinSelectConditions" />
+    <include refid="orderBy_and_pager" />
+  </select>  
+
+  <select id="joinCountSelective" resultType="long" parameterType="map" >
+    select count(*) 
+    <include refid="from_table" />
+    <include refid="joinSelectConditions" />
+  </select>
+  
+    <sql id="joinSelectConditions" >
+       <where>
+	       <if test="apId > 0 " >
+	          and asset.ap_id = #{ apId } and ( asset.transfer_status = 1 or asset.transfer_status = 2 )
+	      </if>
+	      <if test="apId == null and transferStatus > -1" >
+	          and asset.transfer_status = #{ transferStatus }
+	      </if>
+	      <if test="surplusPrincipalAmount > 0 " >
+	          and asset.surplus_principal_amount <![CDATA[ <= ]]> #{ surplusPrincipalAmount }
+	      </if>
+	      <if test="productType != null and productType != '' " >
+	          and asset.product_type like CONCAT('%', #{ productType }, '%')
+	      </if>    
+	      <if test="stageNo > 0 " >
+	          and asset.stage_no = #{ stageNo }
+	      </if>
+	      <if test="overDueDay > 0 " >
+	          and ( asset.over_due_day <![CDATA[ <= ]]> #{ overDueDay } or asset.over_due_day is null )
+	      </if>      
+	      <if test="startDueDate != null and startDueDate != '' " >
+	          and asset.due_date <![CDATA[ >= ]]> #{ startDueDate }
+	      </if>
+	      <if test="endDueDate != null and endDueDate != '' " >
+	          and asset.due_date <![CDATA[ <= ]]> #{ endDueDate }
+	      </if>      
+	      <if test="idList != null " >
+	          and 
+	         <foreach collection="idList" index="index" item="item" 
+	                       open="(" separator="or" close=")">
+	            asset.repay_status = #{item} 
+	         </foreach>
+	      </if>
+	      <if test="merchantName != null and merchantName != '' " >
+	          and mer.name like CONCAT('%', #{ merchantName }, '%')
+	      </if>  
+      </where>
+  </sql>
+  
+  
+  
+  
+
+  
+
+  
+  <select id="sumInterestInquiry" parameterType="string" resultMap="sumMap">
+        select <include refid="sumList" />
+        from tbl_asset_detail 
+        where ap_id = #{apId}
+   </select>
+
+  <sql id="sumList" >
+    sum( loan_principal_amount ) as loanPrincipalAmountSum,
+    sum( transfer_principal_interest ) as transferPrincipalInterestSum,
+    sum( repay_principal_interest ) as repayPrincipalInterestSum,
+    sum( surplus_principal_amount ) as surplusPrincipalAmountSum
+   </sql>
+
+   <resultMap id="sumMap" type="map" >
+    <result column="loanPrincipalAmountSum" property="loanPrincipalAmountSum" jdbcType="DECIMAL" />
+    <result column="transferPrincipalInterestSum" property="transferPrincipalInterestSum" jdbcType="DECIMAL" />
+    <result column="repayPrincipalInterestSum" property="repayPrincipalInterestSum" jdbcType="DECIMAL" />
+    <result column="surplusPrincipalAmountSum" property="surplusPrincipalAmountSum" jdbcType="DECIMAL" />
+   </resultMap>
+  
+  
+
+   
+   <resultMap type="java.util.Map" id="checkLoanIdMap">
+        <result column="loan_id" property="loan_id" jdbcType="VARCHAR"/>
+        <result column="transfer_status" property="transfer_status" jdbcType="SMALLINT"/>
+        <result column="surplus_principal_amount" property="surplus_principal_amount" jdbcType="DECIMAL"/>
+   </resultMap>
+   
+   <select id="checkLoanId" parameterType="java.lang.String" resultMap="checkLoanIdMap">
+        select loan_id, transfer_status, surplus_principal_amount 
+        from tbl_asset_detail 
+        where loan_id = #{loanId,jdbcType=VARCHAR}
+   </select>
+   
+   <update id="updateTransferPrincipalInterest" parameterType="java.util.Map">
+        update tbl_asset_detail set transfer_status = #{transfer_status,jdbcType=SMALLINT}, 
+        transfer_principal_interest = #{transfer_principal_interest,jdbcType=DECIMAL} 
+        where loan_id = #{loan_id,jdbcType=VARCHAR}
+   </update>
+
+</mapper>

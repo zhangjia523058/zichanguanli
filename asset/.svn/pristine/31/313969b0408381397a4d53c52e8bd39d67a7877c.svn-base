@@ -1,0 +1,178 @@
+/* Style for tables */
+.listBody {
+    bgcolor: #fff;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+}
+/* list-table-style */
+.pagebanner {
+    FONT-SIZE: 9pt;
+
+}
+.pagelinks {
+    FONT-SIZE: 9pt;
+}
+
+.pagelinks a {
+    FONT-SIZE: 9pt;
+}
+
+.list-table-style {
+    width: 100%;
+    border: 1px solid;
+    cellspacing: 0;
+    cellpadding: 0;
+    border-collapse: collapse;
+    margin-right: 2px;
+    margin-left: 2px;
+}
+
+.searchTableStyle {
+    bgColor: #fff;
+    border: 0 solid;
+    width: 80%;
+}
+
+.searchTableStyle tr td {
+    bgColor: #fff;
+    border: 0 solid;
+    white-space: nowrap;
+    margin: 0;
+    text-align: left;
+}
+
+.tableHeader {  
+    font-weight: 300;
+    FONT-SIZE: 9pt;
+    COLOR: #444;
+    FONT-FAMILY: "Helvetica";
+    background-color: #C6E8EC;
+    border: 1px solid;
+    white-space: nowrap;
+}
+
+.list-table-style caption {
+    font-size: 1.2em;
+    font-weight: 900;
+}
+
+.list-table-style th {
+    font-weight: 900;
+    FONT-SIZE: 9pt;
+    COLOR: #444;
+    FONT-FAMILY: "Helvetica";
+    background-color: #38a1ff;
+    border: 1px solid;
+    white-space: nowrap;
+    height: 46px;
+}
+.unSelectedTableRow {
+    background-color: "";
+    COLOR: #666;
+}
+
+.selectedTableRow {
+    background-color: "#0066FF";
+    COLOR: #FFF;
+}
+
+.list-table-style td {
+    FONT-SIZE: 9pt;
+    COLOR: #666;
+    border: 1px solid;
+    bgColor: #c6e8ec;
+    vertical-align: middle;
+    text-align: center;
+    white-space: nowrap; 
+    height: 46px;
+}
+
+.list-table-style td img {
+    width: 9px;
+    height: 14px;
+    border: solid 0;
+}
+
+.list-table-style td a {
+    cursor: hand;
+}
+
+/* editTableStyle */
+.editTableStyle {
+    border: 0 solid;
+    cellspacing: 0;
+    cellpadding: 0;
+    border-collapse: collapse;
+    border-color: #5FBACE;
+}
+
+.editTableStyle th {
+    font-weight: 300;
+    FONT-SIZE: 9pt;
+    FONT-FAMILY: "����";
+    border-color: #5FBACE;
+    border-left: 0 solid;
+    border-right: 0 solid;
+    border-bottom: 1px solid;
+    border-top: 0 solid;
+    white-space: nowrap;
+    text-align: left;
+    height: 35px;
+}
+#resultlist  th input {
+    vertical-align: middle;
+}
+.editTableStyle td {
+    vertical-align: middle;
+    text-align: left;
+    border-color: #5FBACE;
+    border-left: 0 solid;
+    border-right: 0 solid;
+    border-bottom: 1px solid;
+    border-top: 0 solid;
+    height: 35px;
+}
+
+.editTableStyle tfoot tr td {
+    vertical-align: middle;
+    text-align: center;
+    border-color: #5FBACE;
+    border-left: 0 solid;
+    border-right: 0 solid;
+    border-bottom: 0 solid;
+    border-top: 0 solid;
+    height: 35px;
+}
+
+/* menu.TableStyle */
+.menuTopTableStyle {
+    border: 1px solid;
+    cellspacing: 0;
+    cellpadding: 0;
+    border-collapse: collapse;
+    width: 190;
+    background-color: #FFF8DC;
+}
+
+.menuTopTableStyle tr {
+    height: 25px;
+}
+
+.menuTopTableStyle td {
+    border: 1px solid;
+    cursor: hand;
+}
+
+.menuSubTableStyle {
+    display: none;
+    border: 1px solid;
+    cellspacing: 0;
+    cellpadding: 0;
+    width: 190px;
+}
+
+.menuSubTableStyle td {
+    cursor: hand;
+    valign: top;
+}

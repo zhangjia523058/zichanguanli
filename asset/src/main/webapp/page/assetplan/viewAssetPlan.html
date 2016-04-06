@@ -1,0 +1,150 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title></title>
+
+<link rel="stylesheet" href="../../css/table.css">
+<link rel="stylesheet" href="../../css/public.css">
+<link rel="stylesheet" href="../../css/viewAssetPlan.css">
+<script type="text/javascript" src="../../js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../../js/json2.js"></script>
+<script type="text/javascript" src="../../js/utilJs.js"></script>
+<script type="text/javascript">
+$(function () {
+    // 设置页面的标题
+    document.title = '查看资产计划';
+
+    // 查询要修改的数据
+    var str = window.location + "";
+    var arr = str.split("?id=");
+    ajaxSubmitToUpdateAssetPlan(arr[1]);
+});
+// 查询要修改的数据
+function ajaxSubmitToUpdateAssetPlan(id) {   // alert( id );
+    var url = '/assetPlan/toUpdateAssetPlan';
+    var param = {};
+    put(param, "id", id);       // printObject( param );
+    var callbackFunctionName = "successCallbackOfToUpdateAssetPlan";
+    theAjaxSubmit(url, param, callbackFunctionName);
+}
+
+var tempObj = null;
+
+//查询要修改的数据操作成功的回调函数，将实体类的数据显示在对应的表单里
+function successCallbackOfToUpdateAssetPlan(obj){  // printObject(obj)
+    if(obj.message == "success") {
+        tempObj = obj;
+/*         var param = serializeForm('theForm');   // printObject(param)
+
+        for (var key in param) {
+            if (param.hasOwnProperty(key)) {   // printObject( obj.assetPlan[key] )
+                var content = obj.assetPlan[key];
+
+                if (typeof content == "object") {
+                    content = dateFormatter(content);  // printObject(content);
+                }
+
+                jqGet(key).val(content);
+            }
+        } */
+        // 查询并设置 资产管理人 的下拉列表
+        ajaxSubmitOfFindIdAndNameOfAssetManager();
+    }
+}
+
+// 提交查询
+function ajaxSubmitOfFindIdAndNameOfAssetManager() {
+    var url = '/assetManager/findIdAndNameOfAssetManager';
+    var param = null;
+    var callbackFunctionName = "successCallbackOfFindIdAndNameOfAssetManager";
+    theAjaxSubmit(url, null, callbackFunctionName);
+}
+
+//提交查询 成功的回调函数
+function successCallbackOfFindIdAndNameOfAssetManager(obj) {    // printObject( obj );
+    if(obj.message == "success") {
+        var list = obj.list;      // alert(list.length)
+
+        if (list.length == 0) {
+            jqGet("resultlist").html("没有符合条件的资产管理人");
+        } else {
+            for (var i = 0; i < list.length; i++) {  // alert( list[i].id == inputObj.value)
+                if (list[i].id == tempObj.assetPlan.amId) {
+                    tempObj.assetPlan.amId = list[i].name;
+                    break;
+                }
+            }
+
+            // 展示 查询 结果
+            var param = serializeForm('theForm');
+
+            for (var key in param) {
+                if (param.hasOwnProperty(key)) {   // printObject( obj.assetPlan[key] )
+                    var content = tempObj.assetPlan[key];
+
+                    if (typeof content == "object") {
+                        content = dateFormatter(content);  // 将时间类 js 对象转换为字符串
+                    }
+
+                    jqGet(key).val(content);
+                }
+            }
+        }
+    }
+}
+
+// 分页查询资产计划
+function goToPageOfFindAsset(){
+    var url = '/page/assetplan/findAssetPlan.html';
+    pageForwardWithoutParam(url);
+}
+</script>
+
+</head>
+<body>
+<div class="tap">
+    <ul>
+        <li>
+            <a href="/page/assetplan/findAssetPlan.html">资产计划列表</a>
+        </li>
+    </ul>
+</div>
+<div class="tap-title"><font size="4">查看资产计划</font></div>
+<form method="post" id="theForm">
+<input type="hidden" name="id" id="id">
+    
+<div class="tr-one">
+    <span>
+        <label for="111">管理计划名称:</label>
+        <input type="text"  id="name" name="name" class="input" >
+    </span>
+    <span>
+        <label for="111">资产管理人:</label>
+        <input type="text" id="amId" name="amId" class="input" >
+    </span>
+    <span>
+        <label for="111">管理协议号:</label>
+        <input type="text" id="protocol" name="protocol" class="input" >
+    </span>
+</div>
+<div class="tr-one">
+    <span>
+        <label for="111">合同资产总额（万元）:</label>
+        <input type="text" id="totalAmount" name="totalAmount" class="input" >
+    </span>
+    <span>
+        <label for="111">交割日期:</label>
+        <input type="text" id="handoverDate" name="handoverDate" class="input" >
+    </span>
+    <span>
+        <label for="111">发布日期:</label>
+        <input type="text" id="publishDate" name="publishDate" class="input" >
+    </span>
+</div>
+<div class="buttons">
+    <input type="button" value="返回" onclick="goToPageOfFindAsset()" class="button">
+</div>
+</form>
+</body>
+</html>

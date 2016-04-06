@@ -1,0 +1,150 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title></title>
+<script type="text/javascript" src="../../js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../../js/json2.js"></script>
+<script type="text/javascript" src="../../js/utilJs.js"></script>
+<link rel="stylesheet" href = "../../css/table.css">
+<link rel="stylesheet" href = "../../css/public.css">
+
+<script type="text/javascript">
+$(function () {
+    // 设置页面的标题
+    document.title = '资产的分期明细';
+
+    // 获取传递到页面的关联参数
+    var str = window.location + '';      // alert( str );
+    var arr = str.split('?loanId=');
+
+    jsGet("loanId").value = arr[1];
+    ajaxSubmitOfFindRelatedAssetStageDetail();      // 提交条件查询
+});
+
+//翻到某一页。  whichPage 表示翻到第几页
+function goToPage(whichPage) {
+    setupPagerLinks(whichPage);
+    // alert( whichPage+"   "+currentPage +"  "+jsGet("page").value );
+    ajaxSubmitOfFindRelatedAssetStageDetail();
+}
+
+//提交条件查询，从第一页开始查
+function searchRelatedAssetStageDetail() {
+    jsGet("page").value = 1;   // 点击 查找 按钮，就要显示查找列表的第一页，所以要将这个 page 参数置为 1
+    ajaxSubmitOfFindRelatedAssetStageDetail();
+}
+
+//提交条件查询，包含 searchForm 中的查询条件
+function ajaxSubmitOfFindRelatedAssetStageDetail() {
+    var url = '/assetStageDetail/findAssetStageDetail';
+    var param = serializeForm("searchForm");      // printObject( param );
+    var callbackFunctionName = "successCallbackOfFindRelatedAssetStageDetail";
+    theAjaxSubmit(url, param, callbackFunctionName);
+}
+
+// 提交条件查询 成功的回调函数
+function successCallbackOfFindRelatedAssetStageDetail(obj){    // printObject( obj );
+    if(obj.message == "success") {
+        if (obj.count == 0) {
+            jqGet("resultlist").html("没有查询结果");
+        } else {
+            // 列表的表头 参数
+            var listTitleParam = {};
+            put(listTitleParam, 'loanId', '借据号');
+            put(listTitleParam, 'transferStatus', '转让状态');     // 资产明细的属性
+            put(listTitleParam, 'howManyStage', '分期计划'); // 资产明细的属性
+            put(listTitleParam, 'stageNo', '分期期数');
+            put(listTitleParam, 'productType', '产品类型');
+            put(listTitleParam, 'ippDueDate', '分期还款日');
+            put(listTitleParam, 'repaymentDate', '实际还款日');
+            put(listTitleParam, 'repaymentStatus', '还款状态');
+            put(listTitleParam, 'amount', '当期应还金额');
+            put(listTitleParam, 'principal', '当期应还本金');
+            put(listTitleParam, 'pmtPrincipalAmt', '当期已还本金');
+            put(listTitleParam, 'cost', '当期应还费用');
+            put(listTitleParam, 'pmtFeeAmt', '当期已还费用');
+            put(listTitleParam, 'penalty', '罚息');
+            put(listTitleParam, 'repayPenalty', '已还罚息');
+
+            // 列表的格式化函数 的参数
+            var formatterParam = {};
+            put(formatterParam, 'repaymentDate', 'dateFormatter');
+            put(formatterParam, 'ippDueDate', 'dateFormatter');
+            put(formatterParam, 'repaymentStatus', 'repaymentStatusFormatter');
+            put(formatterParam, 'productType', 'productTypeFormatter');
+            put(formatterParam, 'transferStatus', 'transferStatusFormatter');
+            put(formatterParam, 'repaymentDate', 'dateFormatter');
+
+            // 是否需要在列表左侧显示多选按钮列
+            var checkboxParam = {};
+            put(checkboxParam, "needCheckbox", false);
+
+            // 操作 那一列相关的参数
+            var opColumnParam = null;
+
+            var sumParam = {};
+            sumParam.needSn = true;   // 是否显示序号列
+            sumParam.count = obj.count;   // 总的查询结果数
+            sumParam.page = obj.page;     // 总的查询结果页数
+            sumParam.pageSize = obj.pageSize;   // 每页的行数
+            sumParam.howManyPages = obj.howManyPages;  // 一共有多少页
+
+            var className = "AssetStageDetail";
+            var divId = "resultlist";
+
+            // 生成动态列表
+            generateTable(className, divId, obj.list, listTitleParam, formatterParam,
+                    checkboxParam, opColumnParam, sumParam);
+
+            // 生成分页条
+            generatePager(obj.count, obj.page, obj.pageSize, obj.howManyPages);
+            // 保存分页用的参数
+            jqGet("page").val(obj.page);
+            jqGet("pageSize").val(obj.pageSize);
+            jqGet("howManyPages").val(obj.howManyPages);
+        }
+    }
+}
+
+// 确认是否删除记录
+function toDeleteAssetStageDetail(id) {
+    var re = confirm('确实要删除这条信息吗？');
+    if (re == true) {
+        var url = "/assetStageDetail/deleteAssetStageDetail";     // todo  todo  todo
+        var param = { };
+        put(param, "id", id);
+        var callbackFunctionName = "successCallbackOfDelete";
+        theAjaxSubmit(url, param, callbackFunctionName);
+    }
+}
+
+//删除记录 成功的回调函数
+function successCallbackOfDelete(obj){
+    if(obj.message == "success") {
+        pageForwardWithoutParam("/page/assetplan/findRelatedAssetStageDetail.html");
+    }
+}
+</script>
+</head>
+<body>
+<div class="tap">
+    <ul>
+        <li>
+            <a href="/">首页</a>
+        </li>
+        <li>
+            <a href="/page/assetplan/findAssetPlan.html">资产计划列表</a>
+        </li>
+    </ul>
+</div>
+<div class="tap-title"><font size="4">资产的分期明细</font></div>
+<form id="searchForm" method="post" class="form-table">
+<input type="hidden" id="page" name="page" >
+<input type="hidden" id="pageSize"  name="pageSize" >
+<input type="hidden" id="howManyPages" >
+<input type="hidden" name="loanId"  id="loanId"><!--  loanId = 借据号 -->
+</form>
+<div id="resultlist"></div>
+</body>
+</html>

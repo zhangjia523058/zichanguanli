@@ -1,0 +1,1 @@
+BUILD_SUBMITTER -x -u . -m fpu/activty-service/asset -c "export JAVA_HOME=/usr/java/jdk1.6.0_20&& export MAVEN_HOME=/usr/maven/apache-maven-3.0.4 && export PATH=/usr/maven/apache-maven-3.0.4/bin:$PATH && cd fpu/activty-service/asset && mvn clean install -Dmaven.test.skip=true && mkdir temp && mv target/*.war temp && rm -rf target && mv temp output && echo compiledone"

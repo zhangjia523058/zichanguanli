@@ -1,0 +1,262 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title></title>
+<script type="text/javascript" src="../../js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../../js/json2.js"></script>
+<script type="text/javascript" src="../../js/utilJs.js"></script>
+    <script type="text/javascript" src="../../js/baseorder.js"></script>
+    <script type="text/javascript" src="../../js/constants.js"></script>
+<link rel="stylesheet" href = "../../css/table.css">
+<link rel="stylesheet" href = "../../css/public.css">
+<link rel="stylesheet" href = "../../css/relatedAddAssetDetail_zj.css">
+
+<script type="text/javascript">
+$(function () {
+    // 设置页面的标题
+    document.title = '修改资产计划的资产明细';
+
+    // 隐藏批量操作的按钮
+    jqGet("buttonDiv").hide();
+
+    // 获取传递到页面的关联参数
+    var str = window.location + '';
+    var arr = str.split('?id=');
+
+    jsGet("apId").value = arr[1];
+    ajaxSubmitOfFindRelatedAssetDetail();      // 提交条件查询
+});
+
+//翻到某一页。  whichPage 表示翻到第几页
+function goToPage(whichPage) {
+    setupPagerLinks(whichPage);
+    // alert( whichPage+"   "+currentPage +"  "+jsGet("page").value );
+    ajaxSubmitOfFindRelatedAssetDetail();
+}
+
+//提交条件查询，从第一页开始查
+function searchRelatedAssetDetail() {
+    jsGet("page").value = 1;   // 点击 查找 按钮，就要显示查找列表的第一页，所以要将这个 page 参数置为 1
+    ajaxSubmitOfFindRelatedAssetDetail();
+}
+
+//提交条件查询，包含 searchForm 中的查询条件
+function ajaxSubmitOfFindRelatedAssetDetail() {
+    var url = '/assetDetail/findAssetDetail';
+    var param = serializeForm("searchForm");          //  printObject( param );
+    var callbackFunctionName = "successCallbackOfFindRelatedAssetDetail";
+    theAjaxSubmit(url, param, callbackFunctionName);
+}
+
+// 提交条件查询 成功的回调函数
+function successCallbackOfFindRelatedAssetDetail(obj) {    //  printObject( obj );
+    if(obj.message == "success") {
+        if (obj.count == 0) {
+            jqGet("resultlist").html("没有查询结果");
+
+            jqGet("buttonDiv").hide();
+        } else {
+            jqGet("buttonDiv").show();
+
+            // 列表的表头 参数
+            var listTitleParam = {};
+            put(listTitleParam, 'loanId', '借据号');
+            put(listTitleParam, 'transferStatus', '转让状态');
+            put(listTitleParam, 'stageNo', '分期计划');
+            put(listTitleParam, 'productType', '产品类型');
+            put(listTitleParam, 'loanTime', '放款时间');
+            put(listTitleParam, 'creditAmount', '授信额度');
+            put(listTitleParam, 'loanRate', '贷款利率（月）');
+
+            // put(listTitleParam, 'loanPrincipalAmount', '贷款本息（元）');
+            // put(listTitleParam, 'repayPrincipalInterest', '已还本息（元）');
+            // put(listTitleParam, 'surplusPrincipalAmount', '已转让本息（元）');
+            put(listTitleParam, 'loanAmount', '贷款本金（元）');
+            put(listTitleParam, 'loanFee', '贷款费用（元）');
+            put(listTitleParam, 'repayAmount', '已还本金（元）');
+            put(listTitleParam, 'repayFee', '已还费用（元）');
+            put(listTitleParam, 'transferredAmount', '已转让本金（元）');
+            put(listTitleParam, 'transferredFee', '已转让费用（元）');
+
+            put(listTitleParam, 'surplusPrincipalAmount', '剩余本息（元）');
+
+            put(listTitleParam, 'dueDate', '借据最终还款日');
+            put(listTitleParam, 'repayStatus', '还款状态');
+            put(listTitleParam, 'penaltyInterest', '罚息');
+            put(listTitleParam, 'repayPenaltyInterest', '已还罚息');
+            put(listTitleParam, 'repayPlanChange', '还款计划是否变更');
+            put(listTitleParam, 'repayType', '还款方式');
+
+            put(listTitleParam, 'guaranteeType', '担保类型');
+            put(listTitleParam, 'overDueDay', '累计逾期天数');
+            put(listTitleParam, 'maxOverDueDay', '历史最高逾期天数');
+            put(listTitleParam, 'historyMaxAmount', '历史最高逾期金额');
+            put(listTitleParam, 'overDuePrincipal', '逾期本金金额');
+
+            put(listTitleParam, 'overDueInterest', '逾期利息金额');
+            put(listTitleParam, 'isDiscount', '是否贴息');
+            put(listTitleParam, 'discountBase', '贴息基数');
+            put(listTitleParam, 'discountRate', '贴息比例');
+            put(listTitleParam, 'amortisementDate', '摊销期限');
+            put(listTitleParam, 'amortisementCharge', '应收摊销服务费');
+
+            // put(listTitleParam, 'customerId', '客户 id');
+            // put(listTitleParam, 'merchantId', '商户 id');
+            // put(listTitleParam, 'corpId', '合作机构 id');
+            put(listTitleParam, 'customerName', '客户姓名');
+            put(listTitleParam, 'idcard', '客户身份证号');
+            put(listTitleParam, 'gender', '客户性别');
+            put(listTitleParam, 'age', '客户年龄');
+            put(listTitleParam, 'degree', '客户学历');
+            put(listTitleParam, 'profession', '客户职业');
+            put(listTitleParam, 'area', '客户所在地区');
+
+            put(listTitleParam, 'merchantName', '商户总公司名称');
+            put(listTitleParam, 'merchantBranchName', '商户分公司名称');
+
+            put(listTitleParam, 'corpName', '合作机构名称');
+
+            // 列表的格式化函数 的参数
+            var formatterParam = {};
+            put(formatterParam, 'loanTime', 'emptyStrFormatter');
+            put(formatterParam, 'dueDate', 'emptyStrFormatter');
+            put(formatterParam, 'amortisementDate', 'emptyStrFormatter');
+            put(formatterParam, 'repayStatus', 'repayStatusFormatter');
+            put(formatterParam, 'isDiscount', 'isDiscountFormatter');
+            put(formatterParam, 'repayPlanChange', 'repayPlanChangeFormatter');
+            put(formatterParam, 'productType', 'productTypeFormatter');
+            put(formatterParam, 'repayPlanChange', 'repayPlanChangeFormatter');
+            put(formatterParam, 'transferStatus', 'transferStatusFormatter');
+            put(formatterParam, 'gender', 'genderFormatter');
+            put(formatterParam, 'repayType', 'repayTypeFormatter');
+
+            // 是否需要在列表左侧显示多选按钮列
+            var checkboxParam = {};
+            put(checkboxParam, "needCheckbox", true);
+            put(checkboxParam, "checkboxArg", "loanId");  // checkbox 将这个属性赋值给 checkbox 的 value
+
+            // 操作 那一列相关的参数
+            var opColumnParam = new Array();
+            opColumnParam.push('generateInspectionAssetStageLink');
+            opColumnParam.push('generateDeleteLink');
+
+            var sumParam = {};
+            sumParam.needSn = true;   // 是否显示序号列
+            sumParam.count = obj.count;   // 总的查询结果数
+            sumParam.page = obj.page;     // 总的查询结果页数
+            sumParam.pageSize = obj.pageSize;   // 每页的行数
+            sumParam.howManyPages = obj.howManyPages;  // 一共有多少页
+
+            var className = "AssetDetail";
+            var divId = "resultlist";
+
+            // 生成动态列表
+            generateTable(className, divId, obj.list, listTitleParam, formatterParam,
+                    checkboxParam, opColumnParam, sumParam);
+
+            // 生成分页条
+            generatePager(obj.count, obj.page, obj.pageSize, obj.howManyPages);
+            // 保存分页用的参数
+            jqGet("page").val(obj.page);
+            jqGet("pageSize").val(obj.pageSize);
+            jqGet("howManyPages").val(obj.howManyPages);
+        }
+    }
+}
+
+//生成 查看 资产明细 中的 资产分期明细 的链接
+function generateInspectionAssetStageLink(item) {
+    var classNameEng = 'AssetDetail';
+    var classToFindEng = 'AssetStageDetail';
+
+    var relatedFind =  '<a href="/page/' + classToFindEng.toLowerCase() + '/relatedFind'
+            + classToFindEng + '.html?loanId=' + item.loanId + ' ">查看资产分期明细</a>';
+
+    return relatedFind;
+}
+
+//生成 删除 资产计划 中的 这条 资产 信息 的链接
+function generateDeleteLink(item) {
+    var deleteHtml = '<a href="javascript:void(0)" onclick="toDeleteAssetDetailInAssetPlan'
+            + '( ' + item.id + ' )">删除资产</a>';
+
+    return deleteHtml;
+}
+
+// 确认并删除记录
+function toDeleteAssetDetailInAssetPlan(id) {
+    var re = confirm('确实要删除这条资产信息吗？');
+
+    if (re == true) {
+        var url = "/assetDetail/deleteAssetDetailInAssetPlan";     // todo  todo
+        var param = { };
+        put(param, "id", id);
+        var callbackFunctionName = "successCallbackOfDeleteAssetDetailInAssetPlan";
+        theAjaxSubmit(url, param, callbackFunctionName);
+    }
+}
+
+// 确认 并 批量删除记录
+function toBatchDeleteAssetDetailInAssetPlan() {
+    var checkbox = document.getElementsByName("checkbox");
+    var originalIds = '';
+
+    for (var i = 0; i < checkbox.length; i++) {
+        if (checkbox[i].checked == true) {
+            originalIds += checkbox[i].value + ',';
+        }
+    }
+    // alert( originalIds );
+
+    if (originalIds === '') {
+        alert('请先选择数据');
+        return;
+    }else{
+        var re = confirm('确实要删除这些信息吗？');
+
+        if (re == true) {
+            var url = '/assetDetail/batchDeleteAssetDetailInAssetPlan';
+            var param = {};
+            put(param, 'ids', originalIds);
+            //post( url, param );
+            var callbackFunctionName = 'successCallbackOfDeleteAssetDetailInAssetPlan';
+            theAjaxSubmit(url, param, callbackFunctionName);
+        }
+    }
+}
+
+//删除或批量删除记录 成功的回调函数
+function successCallbackOfDeleteAssetDetailInAssetPlan(obj) {
+    if(obj.message == "success") {
+        pageForwardWithoutParam("/page/assetdetail/relatedEditAssetDetail.html?id=" + jqGet("apId").val());
+    }
+}
+
+</script>
+</head>
+<body>
+<div class="tap">
+    <ul>
+        <li>
+            <a href="/">首页</a>
+        </li>
+        <li>
+            <a href="/page/assetplan/findAssetPlan.html">资产计划列表</a>
+        </li>
+    </ul>
+</div>
+<div class="tap-title"><font size="4">修改资产计划的资产明细</font></div>
+<form id="searchForm" method="post" class="form-table">
+<input type="hidden" id="page" name="page" >
+<input type="hidden" id="pageSize"  name="pageSize" >
+<input type="hidden" id="howManyPages" >
+<input type="hidden" name="apId"  id="apId">
+</form>
+<div id="resultlist"></div>
+<div id="buttonDiv">
+<input type="button" value="批量删除资产" onclick="toBatchDeleteAssetDetailInAssetPlan()"  class="button" >
+</div>
+<br>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title></title>
+<script type="text/javascript" src="../../js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../../js/json2.js"></script>
+<script type="text/javascript" src="../../js/utilJs.js"></script>
+<link rel="stylesheet" href="../../css/table.css">
+<link rel="stylesheet" href="../../css/public.css">
+<link rel="stylesheet" href="../../css/editAssetManager_zj.css">
+
+<script type="text/javascript">
+$(function () {
+    // 设置页面的标题
+    document.title = '修改资产管理人';
+
+    // 查询要修改的数据
+    var str = window.location + '';
+    var arr = str.split('?id=');
+    ajaxSubmitToUpdateAssetManager(arr[1]);
+});
+
+// 查询要修改的数据
+function ajaxSubmitToUpdateAssetManager(id) {      // alert( id );
+    var url = '/assetManager/toUpdateAssetManager';
+    var param = {};
+    put(param, "id", id);       // printObject( param );
+    var callbackFunctionName = "successCallbackOfToUpdateAssetManager";
+    theAjaxSubmit(url, param, callbackFunctionName);
+}
+
+// 查询要修改的数据操作成功的回调函数，将实体类的数据显示在对应的表单里
+function successCallbackOfToUpdateAssetManager(obj){
+    if(obj.message == "success") {
+        jqGet("id").val(obj.assetManager.id);
+        jqGet("amId").val(obj.assetManager.amId);
+        jqGet("name").val(obj.assetManager.name);
+        jqGet("bankName").val(obj.assetManager.bankName);
+        jqGet("branchBankName").val(obj.assetManager.branchBankName);
+        jqGet("bankCard").val(obj.assetManager.bankCard);
+    }
+}
+
+// 提交修改
+function editAssetManager() {
+    if (checkParams()) {
+        var url = '/assetManager/updateAssetManager';
+        var param = serializeForm("theForm");    // printObject( param )
+        var callbackFunctionName = "successCallbackOfEditAssetManager";
+        theAjaxSubmit(url, param, callbackFunctionName);
+    }
+}
+
+// 修改成功的回调函数
+function successCallbackOfEditAssetManager(obj) {     // printObject( obj )
+    if (obj.message == "success") {
+        msg("修改成功");
+        pageForwardWithoutParam("/page/assetmanager/findAssetManager.html");
+    }
+}
+
+//输入校验
+function checkParams() {
+    var name = jqGet("name").val().trim();
+    var bankName = jqGet("bankName").val().trim();
+    var branchBankName = jqGet("branchBankName").val().trim();
+    var bankCard = jqGet("bankCard").val().trim();
+
+    var reg = /^(\d{16}|\d{19})$/;
+
+    if (name.length < 2) {
+        alert("姓名不能少于2个字");
+        return false;
+    }
+
+    if (bankName.length < 4) {
+        alert("银行名称不能少于4个字");
+        return false;
+    }
+
+    if (branchBankName.length < 5) {
+        alert("银行分行名称不能少于5个字");
+        return false;
+    }
+
+    if (bankCard.length < 16 || bankCard.length > 19) {
+        alert("银行卡输入长度有误，请重新输入");
+        return false;
+    } else if (!reg.test(bankCard)) {
+        alert("银行卡输入有误");
+        return false;
+    }
+
+    return true;
+}
+</script>
+</head>
+<body>
+<div class="tap">
+    <ul>
+        <li><a href="/page/assetmanager/findAssetManager.html">资产管理人列表</a></li>
+    </ul>
+</div>
+<div class="tap-title">
+    修改资产管理人  
+</div>
+<form method="post" id="theForm">
+<input type="hidden" name="id" id="id">
+    
+<div class="container"><div class="tr-one"><span>
+<label for="111">资产管理人:</label>
+<input type="input" name="name" id="name"  class="input" >
+</span></div></div>
+
+<div class="container"><div class="tr-one"><span>
+<label for="111">资产管理人银行名称:</label>
+<select name="bankName" id="bankName" class="select">
+    <option value="中国银行">中国银行</option>    
+    <option value="工商银行">工商银行</option>
+    <option value="建设银行">建设银行</option>
+    <option value="招商银行">招商银行</option>
+    <option value="农业银行">农业银行</option>
+    <option value="交通银行">交通银行</option>
+    <option value="光大银行">光大银行</option>
+    <option value="民生银行">民生银行</option>
+    <option value="中信银行">中信银行</option>
+    <option value="华夏银行">华夏银行</option>
+    <option value="兴业银行">兴业银行</option>
+    <option value="平安银行">平安银行</option>
+    <option value="中国邮政储蓄银行">中国邮政储蓄银行</option>
+    <option value="北京银行">北京银行</option>
+    <option value="上海银行">上海银行</option>
+    <option value="南京银行">南京银行</option>
+    <option value="广州银行">广州银行</option>
+    <option value="浦发银行">浦发银行</option>
+    <option value="广发银行股份有限公司">广发银行股份有限公司</option>
+    <option value="杭州银行">杭州银行</option>
+    <option value="大连银行">大连银行</option>
+    <option value="天津银行">天津银行</option>
+    <option value="齐鲁银行">齐鲁银行</option>
+    <option value="渤海银行">渤海银行</option>
+    <option value="江苏银行">江苏银行</option>
+    <option value="青岛银行">青岛银行</option>
+    <option value="长安银行">长安银行</option>
+    <option value="宁波银行">宁波银行</option>
+    <option value="西安银行">西安银行</option>
+    <option value="河北银行">河北银行</option>
+    <option value="廊坊银行">廊坊银行</option>
+    <option value="张家口商行">张家口商行</option>
+    <option value="洛阳银行">洛阳银行</option>
+</select>
+</span></div></div>
+
+<div class="container"><div class="tr-one"><span>
+<label for="111">资产管理人支行名称:</label>
+<input type="input" name="branchBankName" id="branchBankName"  class="input" >
+</span></div></div>
+
+<div class="container"><div class="tr-one"><span>
+<label for="111">资产管理人银行账号:</label>
+<input type="input" name="bankCard" id="bankCard"  class="input" >
+</span></div></div>    
+    
+    
+<div class="buttons">
+    <input type="button" value="修改" onclick="editAssetManager()" class="button">
+</div>
+</form>
+</body>
+</html>

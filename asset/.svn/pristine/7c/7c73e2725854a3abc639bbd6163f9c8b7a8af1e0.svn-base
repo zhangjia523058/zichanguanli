@@ -1,0 +1,431 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title></title>
+<script type="text/javascript" src="../../js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../../js/json2.js"></script>
+<script type="text/javascript" src="../../js/utilJs.js"></script>
+<script type="text/javascript" src="../../js/ajaxfileupload2015.js"></script>
+<link rel="stylesheet" href = "../../css/table.css">
+<link rel="stylesheet" href = "../../css/public.css">
+<link rel="stylesheet" href = "../../css/findAssetPlan_zj.css">
+
+<script type="text/javascript">
+$(function () {
+    // 设置页面的标题
+    document.title = '资产计划列表';
+
+    // 查询并设置 资产管理人 的下拉列表
+    ajaxSubmitOfFindIdAndNameOfAssetManager();
+
+    ajaxSubmitOfFindAssetPlan();  // 提交列表查询
+});
+
+//提交查询
+function ajaxSubmitOfFindIdAndNameOfAssetManager() {
+    var url = '/assetManager/findIdAndNameOfAssetManager';
+    var param = null;
+    var callbackFunctionName = "successCallbackOfFindIdAndNameOfAssetManager";
+    theAjaxSubmit(url, null, callbackFunctionName);
+}
+
+//提交查询 成功的回调函数
+function successCallbackOfFindIdAndNameOfAssetManager(obj) {    // printObject( obj );
+    var selectObj = jqGet('amId');   // 获取页面里的下拉框
+
+    if(obj.message == "success") {
+        var list = obj.list;      // alert(list.length);
+
+        if (list.length == 0) {
+            jqGet("resultlist").html("没有符合条件的资产管理人");
+        } else {
+            for (var i = 0; i < list.length; i++) {
+                selectObj.append(new Option(list[i].name, list[i].id));
+            }
+        }
+    }
+}
+
+//翻到某一页。  whichPage 表示翻到第几页
+function goToPage(whichPage) {
+    setupPagerLinks(whichPage);
+    // alert( whichPage+"   "+currentPage +"  "+jsGet("page").value );
+    ajaxSubmitOfFindAssetPlan();
+}
+
+//提交条件查询，从第一页开始查
+function searchAssetPlan() {
+    jsGet("page").value = 1;   // 点击 查找 按钮，就要显示查找列表的第一页，所以要将这个 page 参数置为 1
+    ajaxSubmitOfFindAssetPlan();
+}
+
+//提交条件查询，包含 searchForm 中的查询条件
+function ajaxSubmitOfFindAssetPlan() {
+    // 计划状态   0=待发行   1=发行  2=撤销。 所以要传递一个 -1，表示查询各种状态
+    var pStatus = jsGet("planStatus").value;   // alert( pStatus)
+
+    if (pStatus === '') {
+        jsGet('planStatus').value = -1;
+    }
+
+    var url = '/assetPlan/findAssetPlan';
+    var param = serializeForm("searchForm");     //printObject( param );
+    var callbackFunctionName = "successCallbackOfFindAssetPlan";
+    theAjaxSubmit(url, param, callbackFunctionName);
+}
+
+// 提交条件查询 成功的回调函数
+function successCallbackOfFindAssetPlan(obj){      //printObject( obj );
+    if(obj.message == "success") {
+        if (obj.count == 0) {
+            jqGet("resultlist").html("没有查询结果");
+        } else {
+            // 列表的表头 参数
+            var listTitleParam = {};
+
+            put(listTitleParam, 'id', '资产管理计划合同号');
+            put(listTitleParam, 'protocol', '资产管理协议号');
+            put(listTitleParam, 'amName', '资产管理人');
+            put(listTitleParam, 'name', '资产管理计划名称');
+            put(listTitleParam, 'totalAmount', '合同资产总额（万元）');
+            put(listTitleParam, 'handoverDate', '交割时间');
+            put(listTitleParam, 'publishDate', '发行时间');
+            put(listTitleParam, 'planStatus', '计划状态');
+
+            // 列表的格式化函数 的参数
+            var formatterParam = {};
+            put(formatterParam, 'planStatus', 'planStatusFormatter');
+            put(formatterParam, 'totalAmount', 'moneyFormatter');
+            put(formatterParam, 'actualAmount', 'moneyFormatter');
+
+            // 是否需要在列表左侧显示多选按钮列
+            var checkboxParam = {};
+            put(checkboxParam, "needCheckbox", true);
+
+            // 功能 那一列相关的参数
+            var opColumnParam = new Array();
+            opColumnParam.push('generateViewLink');
+            opColumnParam.push('generateEditLink');
+            opColumnParam.push('generateCancelLink');
+            opColumnParam.push('generateRelatedFindLink');   // 查看 资产明细 和导出 资产分期明细 的列表页
+            opColumnParam.push('generateRelatedEditLink');    // 修改 资产明细 的列表页
+            opColumnParam.push('generateAddLink');                 // 添加 资产明细 的页面
+            opColumnParam.push('generateExportButton');
+            opColumnParam.push('generateImportButton');
+
+            var snParam = {};
+            snParam.needSn = true;
+
+            // 生成动态列表
+            generateTable("AssetPlan", "resultlist", obj.count, obj.page, obj.pageSize, obj.howManyPages, obj.list,
+                    listTitleParam, formatterParam, checkboxParam, opColumnParam, snParam);
+
+            // 生成分页条
+            generatePager(obj.count, obj.page, obj.pageSize, obj.howManyPages);
+            // 保存分页用的参数
+            jqGet("page").val(obj.page);
+            jqGet("pageSize").val(obj.pageSize);
+            jqGet("howManyPages").val(obj.howManyPages);
+        }
+    }
+}
+
+//生成 查看 资产计划 的链接
+function generateViewLink(item) {
+    var classNameEng = 'AssetPlan';
+
+    var planStatus = item.planStatus;
+
+    var html = '';
+
+    if (planStatus != 2) {
+        html = '<a href="/page/' + classNameEng.toLowerCase() + '/view'
+            + classNameEng + '.html?id=' + item.id + ' ">查看基本信息</a>';
+    } else {
+        html = '查看基本信息';
+    }
+
+    return html;
+}
+
+// 生成修改 资产计划 的链接
+function generateEditLink(item) {
+    var classNameEng = 'AssetPlan';
+    var classToFindEng = 'AssetDetail';
+
+    var planStatus = item.planStatus;
+
+    var html = '';
+
+    if (planStatus == 0) {
+        html = '<a href="/page/' + classNameEng.toLowerCase() + '/edit'
+        + classNameEng + '.html?id=' + item.id + ' ">修改基本信息</a>';
+    } else {
+        html = '修改基本信息';
+    }
+
+    return html;
+}
+
+//生成撤销 资产计划 的链接
+function generateCancelLink(item) {
+    var classNameEng = 'AssetPlan';
+    var classToFindEng = 'AssetDetail';
+
+    var planStatus = item.planStatus;
+
+    var html = '';
+
+    if (planStatus != 0) {
+        html = '撤销资产计划';
+    } else {
+        html = '<a href="javascript:void(0)" onclick="toCancel' + classNameEng
+            + '( ' + item.id + ' )">撤销资产计划</a>';
+    }
+
+    return html;
+}
+
+//生成 修改 资产计划 中的 资产明细 的链接
+function generateRelatedEditLink(item) {
+    var classNameEng = 'AssetPlan';
+    var classToFindEng = 'AssetDetail';
+
+    var planStatus = item.planStatus;
+
+    var html = '';
+
+    if (planStatus != 2) {     // planStatus = 2 是已经插销的资产计划
+        html = '<a href="/page/' + classToFindEng.toLowerCase() + '/relatedEdit'
+        + classToFindEng + '.html?id=' + item.id + ' ">修改资产明细</a>';
+    } else {
+        html = '修改资产明细';
+    }
+
+    return html;
+}
+
+//生成 查看 资产计划 中的 资产明细 的链接
+function generateRelatedFindLink(item) {
+    var classNameEng = 'AssetPlan';
+    var classToFindEng = 'AssetDetail';
+
+    var planStatus = item.planStatus;
+
+    var html = '';
+
+    if (planStatus != 2) {
+        html = '<a href="/page/' + classToFindEng.toLowerCase() + '/relatedFind'
+            + classToFindEng + '.html?id=' + item.id + ' ">查看资产明细 </a>';
+    } else {
+        html = '查看资产明细';
+    }
+
+    return html;
+}
+
+//生成  添加 资产 到 资产计划 中 的链接
+function generateAddLink(item) {
+    var classNameEng = 'AssetPlan';
+    var classToFindEng = 'AssetDetail';
+
+    var planStatus = item.planStatus;
+
+    var html = '';
+
+    if (planStatus != 2) {
+        html = '<a href="javascript:void(0)" onclick="toAdd' + classToFindEng
+        + '( ' + item.id + ' )">添加资产明细</a>';
+    } else {
+        html = '添加资产明细';
+    }
+
+    return html;
+}
+
+//生成 导出 资产计划 中的 资产 的按钮
+function generateExportButton(item) {
+    var classNameEng = 'AssetPlan';
+    var classToFindEng = 'AssetDetail';
+
+    var planStatus = item.planStatus;
+
+    var html = '';
+
+    if (planStatus != 2) {
+        html = '<input type="button" onclick="relatedExport' + classToFindEng
+                + '(' +  item.id + ')" value="导出资产明细" >';
+    } else {
+        html = '<input type="button"  value="导出资产明细" disabled >';
+    }
+
+    return html;
+}
+
+//生成 导入 要购买的 资产计划 中的 资产 的按钮
+function generateImportButton(item) {
+    var planStatus = item.planStatus;
+
+    var html = '';
+
+    if (planStatus != 2) {
+        // 注意 file 类 input 的 id 要做成动态的，但是 name 就叫做 “file” ，不能做成动态的 name 属性。
+        html = '<input type="file"  id="file' + item.id + '" name="file" class="file-input" '
+                    + ' onchange="relatedImportAssetDetail(' +  item.id + ')" value="导入资产明细" /> '
+                    + '<input type="button" value="导入资产文件" style="width:83.9px;" />';
+    } else {
+        html = '<input type="button"  value="导入资产明细" disabled >';
+    }
+
+    return html;
+}
+
+//提交条件查询 成功的回调函数
+function successCallbackOfImportExcelToSellAsset(obj) {
+    // alert(obj.message)
+}
+
+// 确认并删除记录
+function toDeleteAssetPlan(id) {
+    var re = confirm('确实要删除这条信息吗？');
+    if (re == true) {
+        var url = "/assetPlan/deleteAssetPlan";
+        var param = {};
+        put(param, "id", id);
+        var callbackFunctionName = "successCallbackOfDelete";
+        theAjaxSubmit(url, param, callbackFunctionName);
+    }
+}
+
+// 删除记录/撤销记录 成功的回调函数
+function successCallbackOfDelete(obj){
+    if(obj.message == "success") {
+        pageForwardWithoutParam("/page/assetplan/findAssetPlan.html");
+    }
+}
+
+// 确认并撤销资产计划
+function toCancelAssetPlan(id) {
+    var re = confirm('确实要撤销这个资产计划吗？');
+
+    if (re == true) {
+        var url = '/assetPlan/cancelAssetPlan';
+        var param = {};
+        put(param, "id", id);
+        var callbackFunctionName = "successCallbackOfDelete";
+        theAjaxSubmit(url, param, callbackFunctionName);
+    }
+}
+
+// 添加计划相关的资产
+function toAddAssetDetail(id) {   // alert(id)
+    var url = "/page/assetdetail/relatedAddAssetDetail.html";
+    var param = {};
+    put(param, "id", id);
+    pageForward(url, param);
+}
+
+//提交 导出 资产计划 中的 资产 的请求
+function relatedExportAssetDetail(id) {
+    var url = '/assetDetail/exportAssetDetailOfAnAssetPlan';
+    var param = {};
+    param.apId = id;
+    submitPost(url, param);
+}
+
+//提交 导入 资产计划 中的 资产 的请求
+function relatedImportAssetDetail(id) {  // alert(id)
+    var fileInputId = 'file' + id;
+    var fileName = jqGet(fileInputId).val();     // alert(fileName)
+    var extName = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length);
+    extName = extName.toLowerCase();
+
+    if (fileName === '') {  // 验证文件是否存在
+        msg("请选择上传的文件");
+        return false;
+    }
+
+    if (extName !== 'xls') {  // 验证文件的格式
+        msg("只能上传 xls 格式的 excel 文件");
+        return;
+    }
+
+    var url = '/assetDetail/importExcelToSellAsset?apId=' + id;    // alert(url)
+
+    $.ajaxFileUpload({
+        url: url,
+        secureuri: false,
+        stringParam: null,
+        fileElementId: fileInputId,
+        dataType: 'json',
+        success: function (data, status) {  // printObject(data);  // printObject(status)
+            if (status === 'success') {
+                msg("文件导入操作成功");
+            }
+        },
+        error: function (data, status, e) {
+            msg("文件上传操作出错了");     //+data+" "+status+" "+e+" "+data.error);
+        }
+    });
+}
+
+//格式化 资产计划状态
+function planStatusFormatter(value) {
+    if (value === 0) {
+        return '待发行';
+    } else if (value === 1) {
+        return '<font color=\"blue\">发行</font>';
+    } else if (value === 2) {
+        return '<font color=\"red\">撤销</font>';
+    }
+}
+</script>
+</head>
+<body>
+<div class="tap">
+    <ul>
+        <li>
+            <a href="/">首页</a> 
+        </li>
+        <li>
+            <a href="/page/assetplan/addAssetPlan.html">添加资产计划</a>
+        </li>
+    </ul>
+</div>
+<div class="tap-title">查找资产计划</div>
+<form id="searchForm" method="post" class="form-table">
+<input type="hidden" id="page" name="page" >
+<input type="hidden" id="pageSize"  name="pageSize" >
+<input type="hidden" id="howManyPages" >
+
+<div class="container"><div class="tr-one"><span>
+<label for="111">资产管理人:</label>
+<input type="input"  id="managename"  name="managename" class="input" >
+</span></div></div>
+
+<div class="container"><div class="tr-one"><span>
+<label for="111">管理计划的名称:</label>
+<input type="text"  id="name" name="name" class="input" >
+</span></div></div>
+
+<div class="container"><div class="tr-one"><span>
+<label for="111">管理计划的状态:</label>
+<select name="planStatus" id="planStatus" class="select">
+    <option value="-1" selected>全部</option>
+    <option value="0">待发行</option>
+    <option value="1">已发行</option>
+    <option value="2">撤销</option>
+</select>                
+</span></div></div>
+
+
+<div class="buttons">  
+    <input type="button"  value="查找" onclick="searchAssetPlan()" class="button">
+    &nbsp;
+    <input type="button"  value="清空" onclick="resetForm('searchForm')" class="button">
+</div>
+</form>
+<div id="resultlist"></div>
+</body>
+</html>

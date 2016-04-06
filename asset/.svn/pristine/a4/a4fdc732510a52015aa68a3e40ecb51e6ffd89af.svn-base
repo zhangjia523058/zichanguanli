@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.baidu.fbu.asset.mapper.AssetStageDetailMapper" >
+
+  <resultMap id="BaseResultMap" type="com.baidu.fbu.asset.entity.AssetStageDetail" >
+    <id column="loan_id" property="loanId" jdbcType="VARCHAR" />
+    <id column="stage_no" property="stageNo" jdbcType="DECIMAL" />
+    <result column="repayment_status" property="repaymentStatus" jdbcType="CHAR" />
+    <result column="ipp_due_date" property="ippDueDate" jdbcType="DATE" />
+    <result column="repayment_date" property="repaymentDate" jdbcType="DATE" />
+    <result column="product_type" property="productType" jdbcType="VARCHAR" />
+    <result column="amount" property="amount" jdbcType="DECIMAL" />
+    <result column="principal" property="principal" jdbcType="DECIMAL" />
+    <result column="cost" property="cost" jdbcType="DECIMAL" />
+    <result column="interest" property="interest" jdbcType="DECIMAL" />
+    <result column="penalty" property="penalty" jdbcType="DECIMAL" />
+    <result column="payment_amt" property="paymentAmt" jdbcType="DECIMAL" />
+    <result column="pmt_principal_amt" property="pmtPrincipalAmt" jdbcType="DECIMAL" />
+    <result column="pmt_fee_amt" property="pmtFeeAmt" jdbcType="DECIMAL" />
+    <result column="pmt_int_amt" property="pmtIntAmt" jdbcType="DECIMAL" />
+    <result column="repay_penalty" property="repayPenalty" jdbcType="DECIMAL" />
+    <result column="createtime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="updatetime" property="updatetime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <resultMap type="com.baidu.fbu.asset.entity.vo.AssetStageDetailVo" id="stageExcel">
+    <result column="loan_id" property="loanId" jdbcType="VARCHAR"/>
+    <result column="stage_no" property="stageNo" jdbcType="DECIMAL"/>
+    <result column="ipp_due_date" property="ippDueDate" jdbcType="DATE"/>
+    <result column="d_stage_no" property="dStageNo" jdbcType="DECIMAL"/>
+    <result column="product_type" property="productType" jdbcType="VARCHAR"/>
+    <result column="repayment_date" property="repaymentDate" jdbcType="DATE"/>
+    <result column="repayment_status" property="repaymentStatus" jdbcType="VARCHAR"/>
+    <result column="amount" property="amount" jdbcType="DECIMAL"/>
+    <result column="principal" property="principal" jdbcType="DECIMAL"/>
+    <result column="pmt_principal_amt" property="pmtPrincipalAmt" jdbcType="DECIMAL"/>
+    <result column="cost" property="cost" jdbcType="DECIMAL"/>
+    <result column="pmt_fee_amt" property="pmtFeeAmt" jdbcType="DECIMAL"/>
+    <result column="penalty" property="penalty" jdbcType="DECIMAL"/>
+    <result column="repay_penalty" property="repayPenalty" jdbcType="DECIMAL"/>
+    <result column="transfer_status" property="transferStatus" jdbcType="SMALLINT"/>
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    loan_id, stage_no, repayment_status, ipp_due_date, repayment_date, product_type, 
+    amount, principal, cost, interest, penalty, payment_amt, pmt_principal_amt, pmt_fee_amt, 
+    pmt_int_amt, repay_penalty, createtime, updatetime
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.baidu.fbu.asset.entity.AssetStageDetailKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_asset_stage_detail
+    where loan_id = #{loanId,jdbcType=VARCHAR}
+      and stage_no = #{stageNo,jdbcType=DECIMAL}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="com.baidu.fbu.asset.entity.AssetStageDetailKey" >
+    delete from tbl_asset_stage_detail
+    where loan_id = #{loanId,jdbcType=VARCHAR}
+      and stage_no = #{stageNo,jdbcType=DECIMAL}
+  </delete>
+  
+
+
+  <insert id="insert" parameterType="com.baidu.fbu.asset.entity.AssetStageDetail" >
+    insert into tbl_asset_stage_detail (loan_id, stage_no, repayment_status, 
+      ipp_due_date, repayment_date, product_type, 
+      amount, principal, cost, 
+      interest, penalty, payment_amt, 
+      pmt_principal_amt, pmt_fee_amt, pmt_int_amt, 
+      repay_penalty, 
+      createtime, updatetime )
+    values (#{loanId,jdbcType=VARCHAR}, #{stageNo,jdbcType=DECIMAL}, #{repaymentStatus,jdbcType=CHAR}, 
+      #{ippDueDate,jdbcType=DATE}, #{repaymentDate,jdbcType=DATE}, #{productType,jdbcType=VARCHAR}, 
+      #{amount,jdbcType=DECIMAL}, #{principal,jdbcType=DECIMAL}, #{cost,jdbcType=DECIMAL}, 
+      #{interest,jdbcType=DECIMAL}, #{penalty,jdbcType=DECIMAL}, #{paymentAmt,jdbcType=DECIMAL}, 
+      #{pmtPrincipalAmt,jdbcType=DECIMAL}, #{pmtFeeAmt,jdbcType=DECIMAL}, #{pmtIntAmt,jdbcType=DECIMAL}, 
+      #{repayPenalty,jdbcType=DECIMAL}, 
+      NOW(), NOW()  )
+  </insert>
+  
+  
+
+  
+    <update id="updateByPrimaryKey" parameterType="com.baidu.fbu.asset.entity.AssetStageDetail" >
+    update tbl_asset_stage_detail
+    set repayment_status = #{repaymentStatus,jdbcType=CHAR},
+      ipp_due_date = #{ippDueDate,jdbcType=DATE},
+      repayment_date = #{repaymentDate,jdbcType=DATE},
+      product_type = #{productType,jdbcType=VARCHAR},
+      amount = #{amount,jdbcType=DECIMAL},
+      principal = #{principal,jdbcType=DECIMAL},
+      cost = #{cost,jdbcType=DECIMAL},
+      interest = #{interest,jdbcType=DECIMAL},
+      penalty = #{penalty,jdbcType=DECIMAL},
+      payment_amt = #{paymentAmt,jdbcType=DECIMAL},
+      pmt_principal_amt = #{pmtPrincipalAmt,jdbcType=DECIMAL},
+      pmt_fee_amt = #{pmtFeeAmt,jdbcType=DECIMAL},
+      pmt_int_amt = #{pmtIntAmt,jdbcType=DECIMAL},
+      repay_penalty = #{repayPenalty,jdbcType=DECIMAL},
+      updatetime = NOW()
+    where loan_id = #{loanId,jdbcType=VARCHAR}
+      and stage_no = #{stageNo,jdbcType=DECIMAL}
+  </update>
+  
+  
+  
+  
+  <insert id="insertSelective" parameterType="com.baidu.fbu.asset.entity.AssetStageDetail" >
+    insert into tbl_asset_stage_detail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="loanId != null" >
+        loan_id,
+      </if>
+      <if test="stageNo != null" >
+        stage_no,
+      </if>
+      <if test="repaymentStatus != null" >
+        repayment_status,
+      </if>
+      <if test="ippDueDate != null" >
+        ipp_due_date,
+      </if>
+      <if test="repaymentDate != null" >
+        repayment_date,
+      </if>
+      <if test="productType != null" >
+        product_type,
+      </if>
+      <if test="amount != null" >
+        amount,
+      </if>
+      <if test="principal != null" >
+        principal,
+      </if>
+      <if test="cost != null" >
+        cost,
+      </if>
+      <if test="interest != null" >
+        interest,
+      </if>
+      <if test="penalty != null" >
+        penalty,
+      </if>
+      <if test="paymentAmt != null" >
+        payment_amt,
+      </if>
+      <if test="pmtPrincipalAmt != null" >
+        pmt_principal_amt,
+      </if>
+      <if test="pmtFeeAmt != null" >
+        pmt_fee_amt,
+      </if>
+      <if test="pmtIntAmt != null" >
+        pmt_int_amt,
+      </if>
+      <if test="repayPenalty != null" >
+        repay_penalty,
+      </if>
+		createtime, updatetime
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="loanId != null" >
+        #{loanId,jdbcType=VARCHAR},
+      </if>
+      <if test="stageNo != null" >
+        #{stageNo,jdbcType=DECIMAL},
+      </if>
+      <if test="repaymentStatus != null" >
+        #{repaymentStatus,jdbcType=CHAR},
+      </if>
+      <if test="ippDueDate != null" >
+        #{ippDueDate,jdbcType=DATE},
+      </if>
+      <if test="repaymentDate != null" >
+        #{repaymentDate,jdbcType=DATE},
+      </if>
+      <if test="productType != null" >
+        #{productType,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null" >
+        #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="principal != null" >
+        #{principal,jdbcType=DECIMAL},
+      </if>
+      <if test="cost != null" >
+        #{cost,jdbcType=DECIMAL},
+      </if>
+      <if test="interest != null" >
+        #{interest,jdbcType=DECIMAL},
+      </if>
+      <if test="penalty != null" >
+        #{penalty,jdbcType=DECIMAL},
+      </if>
+      <if test="paymentAmt != null" >
+        #{paymentAmt,jdbcType=DECIMAL},
+      </if>
+      <if test="pmtPrincipalAmt != null" >
+        #{pmtPrincipalAmt,jdbcType=DECIMAL},
+      </if>
+      <if test="pmtFeeAmt != null" >
+        #{pmtFeeAmt,jdbcType=DECIMAL},
+      </if>
+      <if test="pmtIntAmt != null" >
+        #{pmtIntAmt,jdbcType=DECIMAL},
+      </if>
+      <if test="repayPenalty != null" >
+        #{repayPenalty,jdbcType=DECIMAL},
+      </if>
+       NOW(), NOW()
+    </trim>
+  </insert>
+  
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.baidu.fbu.asset.entity.AssetStageDetail" >
+    update tbl_asset_stage_detail
+    <set >
+      <if test="repaymentStatus != null" >
+        repayment_status = #{repaymentStatus,jdbcType=CHAR},
+      </if>
+      <if test="ippDueDate != null" >
+        ipp_due_date = #{ippDueDate,jdbcType=DATE},
+      </if>
+      <if test="repaymentDate != null" >
+        repayment_date = #{repaymentDate,jdbcType=DATE},
+      </if>
+      <if test="productType != null" >
+        product_type = #{productType,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null" >
+        amount = #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="principal != null" >
+        principal = #{principal,jdbcType=DECIMAL},
+      </if>
+      <if test="cost != null" >
+        cost = #{cost,jdbcType=DECIMAL},
+      </if>
+      <if test="interest != null" >
+        interest = #{interest,jdbcType=DECIMAL},
+      </if>
+      <if test="penalty != null" >
+        penalty = #{penalty,jdbcType=DECIMAL},
+      </if>
+      <if test="paymentAmt != null" >
+        payment_amt = #{paymentAmt,jdbcType=DECIMAL},
+      </if>
+      <if test="pmtPrincipalAmt != null" >
+        pmt_principal_amt = #{pmtPrincipalAmt,jdbcType=DECIMAL},
+      </if>
+      <if test="pmtFeeAmt != null" >
+        pmt_fee_amt = #{pmtFeeAmt,jdbcType=DECIMAL},
+      </if>
+      <if test="pmtIntAmt != null" >
+        pmt_int_amt = #{pmtIntAmt,jdbcType=DECIMAL},
+      </if>
+      <if test="repayPenalty != null" >
+        repay_penalty = #{repayPenalty,jdbcType=DECIMAL},
+      </if>
+      <if test="createtime != null" >
+        createtime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+       updatetime = NOW()
+    </set>
+    where loan_id = #{loanId,jdbcType=VARCHAR}
+      and stage_no = #{stageNo,jdbcType=DECIMAL}
+  </update>
+  
+           
+  <select id="countSelective" resultType="long" 
+                                 parameterType="com.baidu.fbu.asset.entity.AssetStageDetail" >
+    select count(*) from tbl_asset_stage_detail
+    <where> 
+        <include refid="selectConditions" />
+    </where> 
+  </select>      
+
+  <select id="selectSelective" resultMap="BaseResultMap"  parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_asset_stage_detail
+    <where>
+        <include refid="selectConditions" />
+    </where>
+    order by updatetime desc
+    <if test="startRow > -1 and pageSize > -1" >
+        limit #{startRow}, #{pageSize}
+    </if>
+  </select>
+    
+  <sql id="selectConditions" >
+      <if test="loanId > 0 " >
+          and loan_id = #{ loanId }
+      </if>      
+  </sql>    
+  
+  <select id="exportAssetstages" parameterType="java.util.List" resultMap="stageExcel">
+    select s.loan_id, s.stage_no, s.ipp_due_date, d.stage_no as d_stage_no, s.product_type, s.repayment_date, 
+        s.repayment_status, s.amount, s.principal, s.pmt_principal_amt, s.cost, s.pmt_fee_amt, s.penalty, 
+        s.repay_penalty, d.transfer_status from (
+    select loan_id, stage_no, ipp_due_date, product_type, repayment_date, 
+        repayment_status, amount, principal, pmt_principal_amt, cost, pmt_fee_amt, penalty, 
+        repay_penalty from tbl_asset_stage_detail 
+    where loan_id in 
+    <foreach collection="list" item="item" open="(" separator="," close=")" index="index">
+        '${item}'
+    </foreach>
+    ) as s 
+    left join tbl_asset_detail as d 
+    on s.loan_id = d.loan_id order by s.loan_id, s.stage_no
+  </select>
+  
+</mapper>

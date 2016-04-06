@@ -1,0 +1,207 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title></title>
+<script type="text/javascript" src="../../js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../../js/json2.js"></script>
+<script type="text/javascript" src="../../js/utilJs.js"></script>
+    <script type="text/javascript" src="../../js/baseorder.js"></script>
+    <script type="text/javascript" src="../../js/constants.js"></script>
+<script type="text/javascript" src="../../third/js/date/WdatePicker.js"></script>
+<link rel="stylesheet" href="../../css/table.css">
+<link rel="stylesheet" href="../../css/public.css">
+<link rel="stylesheet" href="../../css/addAssetPlan_zj.css">
+
+<script type="text/javascript">
+$(function () {
+    // 设置页面的标题
+    document.title = '添加资产计划';
+
+    $('#handoverDate').on('click', function () {
+        wdatePicker();
+    });
+
+    $('#publishDate').on('click', function () {
+        wdatePicker();
+    });
+
+    // 查询并设置 资产管理人 的下拉列表
+    ajaxSubmitOfFindIdAndNameOfAssetManager();
+});
+
+// 提交查询
+function ajaxSubmitOfFindIdAndNameOfAssetManager() {
+    var url = '/assetManager/findIdAndNameOfAssetManager';
+    var param = null;
+    var callbackFunctionName = "successCallbackOfFindIdAndNameOfAssetManager";
+    theAjaxSubmit(url, null, callbackFunctionName);
+}
+
+//查询 成功的回调函数
+function successCallbackOfFindIdAndNameOfAssetManager(obj) {    // printObject( obj );
+    var selectObj = jsGet('amId');   // 获取页面里的下拉框
+
+    if(obj.message == "success") {
+        var list = obj.list;      // alert(list.length);
+
+        if (list.length == 0) {
+            jqGet("resultlist").html("没有符合条件的资产管理人");
+        } else {
+            for (var i = 0; i < list.length; i++) {
+                selectObj.options[i] = new Option(list[i].name, list[i].id);
+            }
+        }
+    }
+}
+
+function validateTheForm() {
+    // 校验 资产管理计划名称  是否为 空字符串 和 字符串的最大长度
+    var inputName = '资产管理计划名称';
+    var value = trim(jsGet('name').value);
+    jsGet('name').value = value;
+
+    var result = isNull(value);
+    if (result == true) {
+        alert(inputName + '不能是空字符串');
+        return false;
+    }
+
+    var maxLength = 50;
+    var result = validateMaxLength(value, maxLength);
+    if (result == false) {
+        alert(inputName + '的长度不能大于' + maxLength);
+        return false;
+    }
+
+    // 校验 资产管理人 不能为空
+    var inputName = '资产管理人';
+
+    var result = isNull(jqGet('amId').val());
+    if (result == true) {
+        alert(inputName + '不能是空字符串');
+        return false;
+    }
+
+    // 校验 资产管理协议号  空字符串 和 字符串的最大长度
+    var inputName = '资产管理协议号';
+    var value = trim(jsGet('protocol').value);
+    jsGet('protocol').value = value;
+
+    var result = isNull(value);
+    if (result == true) {
+        alert(inputName + '不能是空字符串');
+        return false;
+    }
+
+    var maxLength = 50;
+    var result = validateMaxLength(value, maxLength);
+    if (result == false) {
+        alert(inputName + '的长度不能大于' + maxLength);
+        return false;
+    }
+
+    // 校验 合同资产总额 必须是 正浮点数
+    var inputName = '合同资产总额';
+    var theDouble = jqGet("totalAmount").val().trim();
+    jqGet("totalAmount").val(theDouble);
+
+    var result = isNull(theDouble);
+    if (result == true) {
+        alert(inputName + '不能为空');
+        return false;
+    }
+
+    var result = validateDouble(theDouble);  // alert(result)
+    if (result == false) {
+        alert(inputName + '必须是正浮点数');
+        return false;
+    }
+
+    // 校验 时间
+    var handoverDateStr = jqGet('handoverDate').val().trim();
+    var publishDateStr = jqGet('publishDate').val().trim();
+
+    var name1 = '发布日期';
+    var name2 = '交割日期';
+
+    if (!isNull(handoverDateStr) && !isNull(publishDateStr)) {
+        var result = compareTimeAWithTimeB(publishDateStr, handoverDateStr);
+        if (result <= -1) {     // 0 是 timeA = timeB       1 是 timeA > timeB
+            alert(name1 + "应该大于或等于" + name2);
+            return false;
+        }
+    }
+    return true;
+}
+
+// 添加 资产计划
+function addAssetPlan() {
+    if (validateTheForm()) {   // 校验输入的数据
+        var url = '/assetPlan/addAssetPlan';
+        var param = serializeForm("theForm");
+        var callbackFunctionName = "successCallbackOfAddAssetPlan";   // printObject(param)
+        theAjaxSubmit(url, param, callbackFunctionName);
+    }
+}
+
+// 添加操作成功的回调函数
+function successCallbackOfAddAssetPlan(obj) {  // printObject( obj )
+    if (obj.message == "success") {
+        alert("添加成功");
+        pageForwardWithoutParam("/page/assetplan/findAssetPlan.html");
+    } else {
+        msg(obj.message);
+    }
+}
+</script>
+</head>
+<body>
+<div class="tap">
+    <ul>
+        <li><a href="/">首页</a></li>
+        <li><a href="/page/assetplan/findAssetPlan.html">资产计划列表</a></li>
+    </ul>
+</div>
+<div class="tap-title"><font size="4">添加资产计划</font></div>
+<form method="post" id="theForm">
+
+<div class="container"><div class="tr-one"><span>
+<label for="111">资产管理计划名称:</label>
+<input type="text"  id="name" name="name" class="input" >
+</span></div></div>
+
+<div class="container"><div class="tr-one"><span>
+<label for="111">资产管理人:</label>
+<select name="amId"  id="amId"  class="select">
+</select>
+</span></div></div>
+
+<div class="container"><div class="tr-one"><span>
+<label for="111">资产管理协议号:</label>
+<input type="text" id="protocol" name="protocol" class="input" >
+</span></div></div>
+
+<div class="container"><div class="tr-one"><span>
+<label for="111">合同资产总额（万元）:</label>
+<input type="text" id="totalAmount" name="totalAmount" class="input" >
+</span></div></div>
+
+<div class="container"><div class="tr-one"><span>
+<label for="111">交割日期:</label>
+<input type="text" id="handoverDate" name="handoverDate" class="wdate" >
+</span></div></div>
+
+<div class="container"><div class="tr-one"><span>
+<label for="111">发布日期:</label>
+<input type="text" id="publishDate" name="publishDate" class="wdate" >
+</span></div></div>
+
+<div class="buttons">
+    <input type="button"  value="添加" onclick="addAssetPlan()" class="button">
+    &nbsp;
+    <input type="button"  value="清空" onclick="resetForm('theForm')" class="button">
+</div>
+</form>
+</body>
+</html>

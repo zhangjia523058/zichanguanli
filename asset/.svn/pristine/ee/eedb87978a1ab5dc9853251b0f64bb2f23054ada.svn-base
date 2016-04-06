@@ -1,0 +1,358 @@
+* { 
+    margin: 0 ; 
+    padding: 0 ; 
+    list-style: none ;
+    text-align: center;
+}
+a { 
+    text-decoration:  none ;
+}
+.fl {
+    float: left;
+}
+.fr {
+    float: right;
+}
+html,
+body { 
+    font: normal 14px "Microsoft YaHei" ;
+    font-family: "Microsoft YaHei", "΢���ź�", "sans-serif"  ;
+    /* _font:normal 13px "sans-serif"; */
+}
+.clear  {
+    clear: both;
+}
+.buttons {
+    width: 502px;
+    margin: 40px auto;
+    text-align: center;
+}
+/*input����ʽ*/
+input {
+    text-align: left;
+    vertical-align: middle;
+}
+.input  {
+    width: 150px;
+    height: 26px;
+    padding-left: 5px;
+    font-size: 12px;
+    line-height: 26px;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    text-align: left;
+}
+.input:hover {
+    border-color: #66afe9;
+    outline: 0;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+}
+/*select����ʽ*/
+.field span {
+    display: block;
+    margin-top: 11px;
+}
+.field span ul {
+    float: left;
+    font-size: 12px;
+}
+.select-box cite:hover {
+    border-color: #66afe9;
+    outline: 0;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+}
+.select-box {
+    position: relative;
+    border-radius: 4px;
+}
+.select-box cite {
+    width: 121px; 
+    height: 26px;
+    line-height: 26px; 
+    display: block; 
+    color: #555; 
+    cursor: pointer;
+    font-style: normal;
+    padding-left: 4px; 
+    padding-right: 30px;
+    background: url(../../images/xjt.png) no-repeat right center;
+    color: #555;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+.select-box ul li {
+    cursor: pointer;
+}
+
+.son-ul {
+    width: 155px;
+    position: absolute;
+    left: 0;
+    top: 27px;
+    border: 1px solid #d7d7d7;
+    background: #fff;
+    z-index: 2;
+}
+.son-ul li {
+    display: block;
+    line-height: 25px;
+    padding-left: 5px;
+    width: 150px;
+    color: #999;
+}
+.select-hover {
+    background: #38a1ff;
+    color: #fff !important;
+}
+/*��ѯ    ���ð�ť ��css��ʽ */
+.button {
+    width: 102px;
+    height: 38px;
+    border: 1px solid #38a1ff;
+    text-align: center;
+    line-height: 38px;
+    color: #fff;
+    font: normal 14px "Microsoft YaHei";
+    font-family: "Microsoft YaHei", "΢���ź�", "sans-serif" ;
+    background: #38a1ff;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.button-two {
+    width: 165px;
+    height: 38px;
+    border: 1px solid #38a1ff;
+    text-align: center;
+    line-height: 38px;
+    color: #fff;
+    font: normal 14px "Microsoft YaHei";
+    font-family: "Microsoft YaHei", "΢���ź�", "sans-serif" ;
+    background: #38a1ff;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.reset,
+.export {
+    width: 102px;
+    height: 38px;
+    border: 1px solid #38a1ff;
+    text-align: center;
+    line-height: 38px;
+    color: #38a1ff;
+    font: normal 14px "Microsoft YaHei";
+    font-family: "Microsoft YaHei", "΢���ź�", "sans-serif" ;
+    background: #fff;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-left: 30px;
+}
+
+.reset:hover,
+.export:hover {
+    background: #38a1ff;
+    color: #fff;
+}
+
+/*��ͬ�е���ʽ*/
+.tint {
+    background: #f1f3f7;
+}
+/*С*����*/
+.time {
+    color: #F00;
+    margin-left: 43px;
+}
+
+/*pageSize����ʽ*/
+.page {
+    width: 800px;
+    margin: 20px 0;
+    color: #999;
+}
+.kkpager {
+    float: left;
+    padding: 5px 0;
+    font-size: 13px;
+}
+.kkpager .pageBtnWrap {
+    float: left;
+}
+.kkpager .disabled {
+    float: left;
+    display: inline;
+    padding: 10px 15px;
+    margin-right: 5px;
+    -webkit-border-radius: 3px;
+       -moz-border-radius: 3px;
+            border-radius: 3px;
+    border: 1px solid #DFDFDF;
+    background-color: #FFF;
+    color: #ddd;
+}
+.kkpager .curr {
+    float: left;
+    border: 1px solid #ddd;
+    display: inline;
+    padding: 10px 15px;
+    margin-right: 5px;
+    -webkit-border-radius: 3px;
+       -moz-border-radius: 3px;
+            border-radius: 3px;
+    background: #38a1ff;
+    color: #fff;
+}
+.kkpager a {
+    float: left;
+    border: 1px solid #ccc;
+    display: inline;
+    padding: 10px 15px;
+    margin-right: 5px;
+    -webkit-border-radius: 3px;
+       -moz-border-radius: 3px;
+            border-radius: 3px;
+    cursor: pointer;
+    background: #fff;
+    text-decoration: none;
+}
+.kkpager a:hover {
+    border: 1px solid #ddd;
+    background: #38a1ff;
+    color: #fff;
+}
+.mid-page {
+    padding: 5px 0;
+    height: 39px;
+    line-height: 39px;
+    letter-spacing: 1px;
+}
+.two-text {
+    position: relative;
+}
+.go_alert  {
+    display: none;
+    width: 60px;
+    height: 34px;
+    border: 0;
+    overflow: hidden;
+    line-height: 140%;
+    padding: 0;
+    margin: 0 0 0 30px;
+    text-align: center;
+    cursor: pointer;
+    background: #4ca8ff;
+    color: #FFF;
+    position: absolute;
+    top: -6px;
+    left: 0;
+    -webkit-border-radius: 3px;
+       -moz-border-radius: 3px;
+            border-radius: 3px;
+    display: none;
+    font-size: 14px;
+}
+.go_input {
+    width: 34px;
+    height: 34px;
+    color: #4ca8ff;
+    text-align: center;
+    margin-left: 4px;
+    margin-right: 4px;
+    border: 1px solid #DFDFDF;
+    position: relative;
+    -webkit-border-radius: 3px;
+       -moz-border-radius: 3px;
+            border-radius: 3px;
+    left: 0;
+    top: 0;
+    outline: none;
+}
+#resultlist {
+    padding: 0  25px;
+}
+.tip {
+    float: left;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    text-indent: 15px;
+}
+.tip .strip  {
+    color: #38a1ff;
+}
+.container {
+    width: 920px;
+    margin: 0 auto;
+    margin-top: 30px;
+}
+.tr-one {
+    height: 28px;
+    width: 320px;
+    margin: 0 auto;
+    margin-bottom: 10px;
+}
+.tr-two {
+    height: 28px;
+    width: 390px;
+    margin: 0 auto;
+    margin-bottom: 10px;
+}
+.tr-one  span {
+    float: left;
+    white-space: nowrap;
+}
+.tr-one  span label {
+    float: left;
+    width: 132px;
+    text-align: right;
+    padding: 6px 5px 0 0;
+    font-size: 13px;
+}
+.tr-one  span .big-label {
+    float: left;
+    width: 150px;
+    text-align: right;
+    padding: 6px 5px 0 0;
+    font-size: 13px;
+}
+.tap {
+    height: 46px;
+    line-height: 46px;
+    text-indent: 20px;
+    border-bottom: 1px solid #38a1ff;
+}
+.tap ul {
+    float: right;
+}
+.tap ul li {
+    float: left;
+    margin-right: 10px;
+}
+.tap-title {
+    height: 46px;
+    line-height: 46px;
+}
+.odd {
+    background-color: #f1f3f7;
+}
+#resultlist table tr td div {
+    display: inline;
+    margin-left: 5px;
+    margin-right: 5px;
+    position: relative;
+}
+
+
+
+
+
+
+

@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.baidu.fbu.asset.mapper.AssetPlanMapper" >  
+
+  <resultMap id="BaseResultMap" type="com.baidu.fbu.asset.entity.AssetPlan" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="am_id" property="amId" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="protocol" property="protocol" jdbcType="VARCHAR" />
+    <result column="total_amount" property="totalAmount" jdbcType="DECIMAL" />
+    <result column="actual_amount" property="actualAmount" jdbcType="DECIMAL" />
+    <result column="plan_status" property="planStatus" jdbcType="SMALLINT" />
+    <result column="handover_date" property="handoverDate" jdbcType="DATE" />
+    <result column="publish_date" property="publishDate" jdbcType="DATE"  />
+    <result column="createtime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="updatetime" property="updatetime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, am_id, name, protocol, total_amount, actual_amount, 
+    plan_status, handover_date, publish_date, 
+    createtime, updatetime
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_asset_plan
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByManagerId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_asset_plan where am_id = #{amId}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from tbl_asset_plan
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+    
+  <insert id="insertSelective" parameterType="com.baidu.fbu.asset.entity.AssetPlan" >
+    insert into tbl_asset_plan
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="amId != null" >
+        am_id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="protocol != null" >
+        protocol,
+      </if>
+      <if test="totalAmount != null" >
+        total_amount,
+      </if>
+      <if test="actualAmount != null" >
+        actual_amount,
+      </if>
+      <if test="planStatus != null" >
+        plan_status,
+      </if>
+      <if test="handoverDate != null" >
+        handover_date,
+      </if>
+      <if test="publishDate != null" >
+        publish_date,
+      </if>
+      <if test="createtime != null" >
+        createtime,
+      </if>
+      <if test="updatetime != null" >
+        updatetime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="amId != null" >
+        #{amId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="protocol != null" >
+        #{protocol,jdbcType=VARCHAR},
+      </if>
+      <if test="totalAmount != null" >
+        #{totalAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="actualAmount != null" >
+        #{actualAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="planStatus != null" >
+        #{planStatus,jdbcType=SMALLINT},
+      </if>
+      <if test="handoverDate != null" >
+        #{handoverDate,jdbcType=DATE},
+      </if>
+      <if test="publishDate != null" >
+        #{publishDate,jdbcType=DATE},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>   
+
+  <update id="updateSelective" parameterType="com.baidu.fbu.asset.entity.AssetPlan" >
+    update tbl_asset_plan
+    <set >
+      <if test="amId != null" >
+        am_id = #{amId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="protocol != null" >
+        protocol = #{protocol,jdbcType=VARCHAR},
+      </if>      
+      <if test="totalAmount > 0" >
+        total_amount = #{totalAmount,jdbcType=DECIMAL}, 
+      </if>     
+      <if test="actualAmount > 0" >
+        actual_amount = #{actualAmount,jdbcType=DECIMAL}, 
+      </if>
+      <if test="handoverDate != null" >
+        handover_date = #{handoverDate,jdbcType=DATE},
+      </if>
+      <if test="publishDate != null" >
+        publish_date = #{publishDate,jdbcType=DATE},
+      </if>
+      <if test="planStatus != null" >
+        plan_status = #{planStatus,jdbcType=SMALLINT},
+      </if>
+      <if test="createtime != null" >
+        createtime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatetime != null" >
+        updatetime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+       
+  <select id="selectSelective" resultMap="BaseResultMap"  parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_asset_plan
+    <include refid="selectConditions" />
+    <include refid="orderByAndPager" />
+  </select>  
+  
+  <select id="countSelective" resultType="long" 
+                                 parameterType="com.baidu.fbu.asset.entity.AssetPlan" >
+    select count(*) from tbl_asset_plan
+   <include refid="selectConditions" />
+  </select>
+  
+  <sql id="orderByAndPager" >
+      order by updatetime desc
+      <if test="startRow > -1 and pageSize > -1" >
+          limit #{startRow}, #{pageSize}
+      </if>
+  </sql>
+  
+  <sql id="selectConditions" >
+    <where> 
+      <if test="name != null and name != '' " >
+          and name like CONCAT('%', #{ name }, '%')
+      </if>       
+      <if test="protocol != null and protocol != '' " >
+          and protocol like CONCAT('%', #{ protocol }, '%')
+      </if>   
+      <if test="planStatus == 0 or planStatus == 1 or planStatus == 2" >
+          and plan_status = #{ planStatus, jdbcType=INTEGER } 
+      </if>   
+    </where> 
+  </sql>
+
+  
+  <resultMap id="CustomResultMap" type="map" >    
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="protocol" property="protocol" jdbcType="VARCHAR" />
+    <result column="total_amount" property="totalAmount" jdbcType="DECIMAL" />
+    <result column="actual_amount" property="actualAmount" jdbcType="DECIMAL" />
+    <result column="plan_status" property="planStatus" jdbcType="SMALLINT" />
+    <result column="handover_date" property="handoverDate" jdbcType="DATE" />
+    <result column="publish_date" property="publishDate" jdbcType="DATE" />
+    <result column="createtime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="updatetime" property="updatetime" jdbcType="TIMESTAMP" />
+    
+    <result column="am_id" property="amId" jdbcType="INTEGER" />
+    <result column="am_name" property="amName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Custom_Column_List" >
+     p.id,
+     p.plan_status,
+     p.name,
+     p.protocol,
+     p.total_amount,
+     p.actual_amount,
+     p.handover_date,
+     p.publish_date,
+     p.createtime,
+     p.updatetime,
+     
+     m.id as am_id,
+     m.name as am_name
+  </sql>
+  
+  <sql id="fromTables" >
+      from tbl_asset_plan p
+        inner join tbl_asset_manager m
+        on p.am_id = m.id
+  </sql>
+  
+  <sql id="joinOrderByAndPager" >
+	    order by p.updatetime desc
+	    <if test="startRow > -1 and pageSize > -1" >
+	        limit #{startRow}, #{pageSize}
+	    </if>
+   </sql>
+    
+  <select id="joinSelectSelective" resultMap="CustomResultMap" parameterType="map" >
+    select 
+    <include refid="Custom_Column_List" />
+    <include refid="fromTables" />
+    <include refid="joinSelectConditions" />
+    <include refid="joinOrderByAndPager" />
+  </select>  
+
+  <select id="joinCountSelective" resultType="long"
+                                 parameterType="com.baidu.fbu.asset.entity.AssetPlan" >
+    select count(*) 
+    <include refid="fromTables" />
+    <include refid="joinSelectConditions" />
+  </select>
+  
+  <sql id="joinSelectConditions" >
+    <where> 
+      <if test="name != null and name != '' " >
+          and p.name like CONCAT('%', #{ name }, '%')
+      </if>
+	  <if test="protocol != null and protocol != '' " >
+	          and p.protocol like CONCAT('%', #{ protocol }, '%')
+      </if>   
+      <if test="planStatus == 0 or planStatus == 1 or planStatus == 2" >
+          and p.plan_status = #{ planStatus, jdbcType=INTEGER } 
+      </if>
+      <if test="managename != null and managename != '' " >
+          and m.name like CONCAT('%', #{ managename }, '%')
+      </if>
+      and m.status = 2 
+    </where>   
+  </sql>
+      
+  <update id="batchUpdateByParam" parameterType="map" >  
+    update tbl_asset_plan set 
+        plan_status = #{ planStatus },
+        updatetime = #{ updatetime }
+    where id in 
+    <foreach collection="idList" index="index" item="item" open="(" separator="," close=")">   
+        #{item}   
+    </foreach>  
+   </update>
+  
+</mapper>

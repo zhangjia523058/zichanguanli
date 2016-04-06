@@ -1,0 +1,28 @@
+# Basic DataSource
+datasource.defaultAutoCommit=false
+datasource.initialSize=3
+datasource.maxIdle=10
+datasource.minIdle=0
+datasource.maxWait=5000
+datasource.testWhileIdle=true
+datasource.testOnBorrow=true
+datasource.testOnReturn=false
+datasource.validationQuery=SELECT 1 FROM DUAL
+datasource.timeBetweenEvictionRunsMillis=30000
+datasource.minEvictableIdleTimeMillis=60000
+datasource.logAbandoned=true
+datasource.removeAbandoned=true
+datasource.removeAbandonedTimeout=120
+
+# Custom DataSource
+merchant.mysql.driver=com.mysql.jdbc.Driver
+merchant.jdbc.url=jdbc:mysql://xxxxxxxxx:xxx/asset?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull
+merchant.jdbc.username=xxxx
+merchant.jdbc.password=xx
+merchant.jdbc.maxActive=20
+
+# mis url
+mis.checkurl=http://mis.fbu.baidu.com/externalAccessController
+mis.getinfourl=http://mis.fbu.baidu.com//externalGetUserController
+mis.sign=dc33ec1d68878d87
+mis.merchant=merchant

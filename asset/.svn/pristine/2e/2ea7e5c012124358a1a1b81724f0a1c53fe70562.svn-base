@@ -1,0 +1,264 @@
+/**
+ * author: wang lin
+ * date: 2015
+ * @file
+ */
+function BaseUtil() {
+    this.updateDateFormateYMDHMS = function (eleValue) {
+        var str = '';
+        var tools = {
+            addZero: function (value) {
+                return value < 10 ? '0' + value : value;
+            }
+        };
+
+        if (Number(eleValue) === 0) {
+            return str = '--';
+        } else {
+            var time = new Date(Number(eleValue) * 1000);
+            var year = time.getFullYear();
+            var month = tools.addZero(time.getMonth() + 1);
+            var day = tools.addZero(time.getDate());
+            var hours = tools.addZero(time.getHours());
+            var minutes = tools.addZero(time.getMinutes());
+            var seconds = tools.addZero(time.getSeconds());
+            str = year + '/' + month + '/' + day + ' ' + hours + ':' + minutes + ':' + seconds;
+            return str;
+        }
+
+    };
+
+    this.updateDateFormate = function (eleValue) {
+        var str = '';
+        var tools = {
+            addZero: function (value) {
+                return value < 10 ? '0' + value : value;
+            }
+        };
+
+        if (Number(eleValue) === 0) {
+            return str = '--';
+        } else {
+            var time = new Date(Number(eleValue) * 1000);
+            var year = time.getFullYear();
+            var month = tools.addZero(time.getMonth() + 1);
+            var day = tools.addZero(time.getDate());
+            str = year + '/' + month + '/' + day;
+            return str;
+        }
+
+    };
+
+    this.money = function (ele) {
+        if (ele === undefined || ele === null || Number(ele) === 0 || String(ele) === '') {
+            return '0';
+        } else {
+            var str = (ele / 100).toFixed(2) + '';
+            var intSum = str.substring(0, str.indexOf('.')).replace(/\B(?=(?:\d{3})+$)/g, ',');// 取到整数部分
+            var dot = str.substring(str.length, str.indexOf('.'));// 取到小数部分
+            var ret = intSum + dot;
+            return ret;
+        }
+
+    };
+
+    this.unit = function (eleValue) {
+        var result = eleValue;
+        if (eleValue === null || eleValue === undefined) {
+            result = '--';
+        }
+
+        if (String(eleValue) === '') {
+            result = '--';
+        }
+
+        if (String(eleValue) === 'N') {
+            result = '--';
+        }
+        return result;
+    };
+    this.orderTotalOtherFormate = function (eleValue) {
+        var result = eleValue;
+        if (eleValue === null || eleValue === undefined) {
+            result = '--';
+        }
+
+        if (String(eleValue) === '') {
+            result = '--';
+        }
+
+        if (String(eleValue) === 'N') {
+            result = '--';
+        }
+        return result;
+    };
+    this.intIdFormate = function (eleValue) {
+        var result = eleValue;
+        if (eleValue === null || eleValue === undefined) {
+            result = '--';
+        }
+
+        if (Number(eleValue) === 0) {
+            result = '--';
+        }
+
+        if (String(eleValue) === '') {
+            result = '--';
+        }
+
+        if (String(eleValue) === 'N') {
+            result = '--';
+        }
+        return result;
+    };
+
+
+
+    this.settleStatusFormate = function (eleValue) {
+        var result = '--';
+        if (Number(eleValue) === 0) {
+            result = '未对账';
+        } else if (Number(eleValue) === 1) {
+            result = '已对账';
+        }
+        return result;
+    };
+    this.settleAccountModel = function (eleValue) {
+        var result = '--';
+        if (Number(eleValue) === 1) {
+            result = '自动对账';
+        } else if (Number(eleValue) === 2) {
+            result = '手工对账';
+        }
+        return result;
+    };
+
+    this.bankCardFormate = function (eleValue) {
+        var result = eleValue;
+        if (eleValue === null || eleValue === undefined) {
+            result = '--';
+        }
+
+        if (String(eleValue) === '') {
+            result = '--';
+        }
+
+        if (String(eleValue) === 'N') {
+            result = '--';
+        }
+        return result;
+    };
+
+
+    this.resultError = function (data) {
+        if (data !== null && data !== undefined) {
+            if (data.responseJSON !== undefined && data.responseJSON.msg !== undefined) {
+                alert(data.responseJSON.msg);
+            } else {
+                if (data.status !== null && data.status !== undefined) {
+                    if (Number(data.status) > 0 && data.msg !== null && data.msg !== undefined) {
+                        alert(data.msg);
+                    } else if (Number(data.status) === 0) {
+                        // uuap超时跨域访问问题
+                    } else {
+                        alert('操作异常。');
+                    }
+                }
+            }
+        } else {
+            alert('操作异常。');
+        }
+    };
+
+    this.resultSuccess = function (data) {
+        if (data !== null && data !== undefined) {
+            if (data.status !== null && data.status !== undefined) {
+                if (Number(data.status) > 0 && data.msg !== null && data.msg !== undefined) {
+                    alert(data.msg);
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    };
+
+    this.allChecks = function () {
+        var firstId = document.getElementById('firstId');
+        var choose = document.getElementsByName('checkbox');
+        firstId.onclick = function () {
+            for (var i = 0; i < choose.length; i++) {
+                var cur = choose[i];
+                // 判断是否是可选状态（子目录被某父目录占用的情况下，不可选）
+                if (!cur.disabled) {
+                    cur.checked = this.checked;
+                }
+            }
+            for (var i = 1; i < choose.length; i++) {
+                choose[i].onclick = (function (i) {
+                    return function () {
+                        var flag = true;
+                        for (var j = 1; j < choose.length; j++) {
+                            if (!choose[j].checked) {
+                                flag = false;
+                                break;
+                            }
+                        }
+                        firstId.checked = flag;
+                    };
+                })(i);
+            }
+        };
+    };
+
+    this.chk = function () {
+        var obj = $('#mainlist input[type="checkbox"]');
+        var s = '';
+        for (var i = 0; i < obj.length; i++) {
+            if (obj[i].checked) {
+                s += obj[i].value + ',';
+            }
+        }
+        return s.substring(0, s.length - 1);
+    };
+
+    // 通过指定的列数组以及对应格式化函数构造ulli列表
+    this.gridBuilder = function (rowData, startRow, column) {
+
+        var gridStr = '';
+        var serialNumber = startRow;
+        var rowLen = rowData.length;
+        for (var x = 0; x < rowLen; x++) {
+
+            var cloumnData = rowData[x];
+            var ulliStr = '<ul class="table-content">';
+            ulliStr += '<li class="table-head0">' + serialNumber + '</li>';
+            var columnLen = column.length;
+            for (var y = 0; y < columnLen; y++) {
+
+                var formatter = column[y].formatter;
+                var argsName = column[y].args;
+                var titleFlg = column[y].title;
+                var argsValue = [];
+                var part = '';
+                var isFunc = typeof formatter === 'function';
+                if (isFunc) {
+                    part = formatter.apply(this, argsValue);
+                } else {
+                    part = this[formatter].apply(this, argsValue);
+                }
+
+                if (titleFlg !== undefined && titleFlg !== null && Boolean(titleFlg)) {
+                    ulliStr += '<li class="table-head' + (y + 1) + '" title="' + part + '"' + '>' + part + '</li>';
+                } else {
+                    ulliStr += '<li class="table-head' + (y + 1) + '">' + part + '</li>';
+                }
+
+            }
+            serialNumber++;
+            ulliStr += '</ul>';
+            gridStr += ulliStr;
+        }
+
+        return gridStr;
+    };
+}

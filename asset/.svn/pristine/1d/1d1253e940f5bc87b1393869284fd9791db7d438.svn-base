@@ -1,0 +1,33 @@
+# Basic DataSource
+datasource.defaultAutoCommit=false
+datasource.initialSize=3
+datasource.maxIdle=10
+datasource.minIdle=0
+datasource.maxWait=5000
+datasource.testWhileIdle=true
+datasource.testOnBorrow=true
+datasource.testOnReturn=false
+datasource.validationQuery=SELECT 1 FROM DUAL
+datasource.timeBetweenEvictionRunsMillis=30000
+datasource.minEvictableIdleTimeMillis=60000
+datasource.logAbandoned=true
+datasource.removeAbandoned=true
+datasource.removeAbandonedTimeout=120
+
+# Custom DataSource
+asset.jdbc.mysql.driver=com.mysql.jdbc.Driver
+asset.jdbc.maxActive=10
+
+asset.jdbc.url=jdbc:mysql://gzns-nbg-fpu-aug-c02xi2-51.gzns:8306/dev_assets?zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
+asset.jdbc.username=payment
+asset.jdbc.password=payment
+
+#asset.jdbc.url=jdbc:mysql://localhost:3306/asset
+#asset.jdbc.username=root
+#asset.jdbc.password=root
+
+# MIS connection config
+mis.checkurl=http://localhost:8089/externalAccessController
+mis.getinfourl=http://localhost:8089/externalGetUserController
+mis.sign=dc33ec1d68878d87
+mis.asset=asset

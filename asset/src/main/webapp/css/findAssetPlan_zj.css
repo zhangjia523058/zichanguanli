@@ -1,0 +1,20 @@
+.tr-one  span label {
+    float: left;
+    width: 150px;
+    text-align: right;
+    padding: 6px 5px 0 0;
+    font-size: 13px;
+}
+.file-box {
+    position: relative;
+    width: 100%;
+}
+.file-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    filter: alpha(opacity: 0);
+    opacity: 0;
+    width: 90px ;
+    height: 22px;
+}

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+    xsi:schemaLocation="
+				http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+				http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+				http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.0.xsd
+				http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+				http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-4.0.xsd">
+
+	<!-- 所有datasource公用的配置信息 -->
+    <bean id="abstractDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+        destroy-method="close">
+        <property name="defaultAutoCommit" value="${datasource.defaultAutoCommit}" />
+        <property name="initialSize" value="${datasource.initialSize}" />
+        <property name="maxIdle" value="${datasource.maxIdle}" />
+        <property name="minIdle" value="${datasource.minIdle}" />
+        <property name="maxWait" value="${datasource.maxWait}" />
+        <property name="testWhileIdle" value="${datasource.testWhileIdle}" />
+        <property name="testOnBorrow" value="${datasource.testOnBorrow}" />
+        <property name="testOnReturn" value="${datasource.testOnReturn}" />
+        <property name="validationQuery" value="${datasource.validationQuery}" />
+        <property name="timeBetweenEvictionRunsMillis" value="${datasource.timeBetweenEvictionRunsMillis}" />
+        <property name="minEvictableIdleTimeMillis" value="${datasource.minEvictableIdleTimeMillis}" />
+        <property name="logAbandoned" value="${datasource.logAbandoned}" />
+        <property name="removeAbandoned" value="${datasource.removeAbandoned}" />
+        <property name="removeAbandonedTimeout" value="${datasource.removeAbandonedTimeout}" />
+    </bean>
+    
+    <bean id="assetDataSource" parent="abstractDataSource">
+        <property name="driverClassName" value="${asset.jdbc.mysql.driver}" />
+        <property name="maxActive" value="${asset.jdbc.maxActive}" />
+        <property name="url" value="${asset.jdbc.url}" />
+        <property name="username" value="${asset.jdbc.username}" />
+        <property name="password" value="${asset.jdbc.password}" />
+    </bean>
+    
+    <!-- 事务管理  transaction manager -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="assetDataSource" />
+    </bean>       
+
+    <!-- 连接事务的注解配置 开启事务-->
+    <tx:annotation-driven transaction-manager="transactionManager" />
+
+    <!-- 创建 SqlSessionFactory，同时指定数据源和 mybatis 映射文件的路径 -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="assetDataSource" />
+        <property name="mapperLocations" value="classpath:/mapper/*.xml" />
+    </bean>
+
+    <!-- Mapper接口 所在包名，Spring会自动查找其下的 Mapper 类，用来注入到 Service 类中 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.baidu.fbu.asset.mapper" />
+    </bean>   
+
+</beans>

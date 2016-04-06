@@ -1,0 +1,43 @@
+.serch-main {
+    margin: 10px auto;
+    height: 20px;
+    line-height: 20px;
+}
+.serch-main input {
+    vertical-align: middle;
+}
+.tr-one {
+    height: 28px;
+    width: 1150px;
+    margin: 0 auto;
+    margin-bottom: 10px;
+    text-align: left;
+}
+.tr-one .fl-one {
+    float: left;
+    white-space: nowrap;
+    margin-right: 10px;
+    height: 31px;
+    line-height: 28px;
+}
+.tr-one  span {
+    float: left;
+    white-space: nowrap;
+    margin-right: 10px;
+}
+.tr-one  span label {
+    float: left;
+    width: 110px;
+    text-align: left;
+    padding: 6px 5px 0 0;
+    font-size: 13px;
+}
+.text-left {
+    text-align: left;
+}
+.buttons .mid {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+

@@ -1,0 +1,241 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title></title>
+<script type="text/javascript" src="../../js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../../js/json2.js"></script>
+<script type="text/javascript" src="../../js/utilJs.js"></script>
+<link rel="stylesheet" href = "../../css/table.css">
+<link rel="stylesheet" href = "../../css/public.css">
+<link rel="stylesheet" href = "../../css/findAssetManager_zj.css">
+
+<script type="text/javascript">
+$(function () {
+    // 设置页面的标题
+    document.title = '资产管理人列表';
+
+    // 查询并设置 资产管理人 的下拉列表
+    ajaxSubmitOfFindIdAndNameOfAssetManager();
+
+    ajaxSubmitOfFindAssetManager();      // 提交查询
+});
+
+//提交查询
+function ajaxSubmitOfFindIdAndNameOfAssetManager() {
+    var url = '/assetManager/findIdAndNameOfAssetManager';
+    var param = null;
+    var callbackFunctionName = "successCallbackOfFindIdAndNameOfAssetManager";
+    theAjaxSubmit(url, null, callbackFunctionName);
+}
+
+//提交查询 成功的回调函数
+function successCallbackOfFindIdAndNameOfAssetManager(obj) {    // printObject( obj );
+    var selectObj = jqGet('amId');   // 获取页面里的下拉框
+
+    if(obj.message == "success") {
+        var list = obj.list;      // alert(list.length);
+
+        if (list.length == 0) {
+            jqGet("resultlist").html("没有符合条件的资产管理人");
+        } else {
+            for (var i = 0; i < list.length; i++) {
+                //selectObj.options[i] = new Option(list[i].name, list[i].id);
+                selectObj.append(new Option(list[i].name, list[i].id));
+            }
+        }
+    }
+}
+
+//翻到某一页。  whichPage 表示翻到第几页
+function goToPage(whichPage) {
+    setupPagerLinks(whichPage); // 设置参数
+    // alert( whichPage+"   "+currentPage +"  "+jsGet("page").value );
+    ajaxSubmitOfFindAssetManager(); // 提交分页的查询
+}
+
+// 提交条件查询，包含 searchForm 中的查询条件
+function ajaxSubmitOfFindAssetManager() {
+    var url = '/assetManager/findAssetManager';
+    var param = serializeForm("searchForm");     // printObject( param );
+    var callbackFunctionName = "successCallbackOfFindAssetManager";
+    theAjaxSubmit(url, param, callbackFunctionName);
+}
+
+// 提交条件查询 成功的回调函数
+function successCallbackOfFindAssetManager(obj){      //printObject( obj );
+    if(obj.message == "success") {
+        if (obj.count == 0) {
+            jqGet("resultlist").html("没有查询结果");
+        } else {
+            // 列表的表头 参数
+            var listTitleParam = {};
+            put(listTitleParam, 'name', '资产管理人名称');
+            put(listTitleParam, 'bankName', '资产管理人银行名称');
+            put(listTitleParam, 'branchBankName', '资产管理人银行分行名称');
+            put(listTitleParam, 'bankCard', '资产管理人银行账号');
+            put(listTitleParam, 'status', '资产管理人的状态');
+
+            // 列表的格式化函数 的参数
+            var formatterParam = {};
+            put(formatterParam, 'status', 'assetManagerStatusFormatter');
+
+            // 是否需要在列表左侧显示多选按钮列
+            var checkboxParam = {};
+            put(checkboxParam, "needCheckbox", false);
+
+            // 生成 功能 那一列用到的参数
+            var opColumnParam = new Array();
+            opColumnParam.push('generateEditLink');
+            opColumnParam.push('generateDeleteLink');
+
+            var snParam = {};
+            snParam.needSn = true;
+
+            // 生成动态列表
+            generateTable("AssetManager", "resultlist", obj.count, obj.page, obj.pageSize, obj.howManyPages, obj.list,
+                    listTitleParam, formatterParam, checkboxParam, opColumnParam, snParam);
+
+            // 生成分页条
+            generatePager(obj.count, obj.page, obj.pageSize, obj.howManyPages);
+
+            // 保存分页用的参数
+            jqGet("page").val(obj.page);
+            jqGet("pageSize").val(obj.pageSize);
+            jqGet("howManyPages").val(obj.howManyPages);
+        }
+    }
+}
+
+//提交条件查询，从第一页开始查
+function searchAssetManager() {
+    jsGet("page").value = 1;   // 点击 查找 按钮，就要显示查找列表的第一页，所以要将这个 page 参数置为 1
+
+    // 去掉输入的首尾空格
+    var value = trim(jsGet('name').value);
+    jsGet('name').value = value;
+
+    ajaxSubmitOfFindAssetManager();
+}
+
+//生成 修改 资产管理人 的链接
+function generateEditLink(item) {
+    var classNameEng = 'AssetManager';
+
+    var editHtml = '<a href="/page/' + classNameEng.toLowerCase() + '/edit'
+        + classNameEng + '.html?id=' + item.id + ' ">修改</a>';
+
+    return editHtml;
+}
+
+//生成 删除 资产管理人 的链接
+function generateDeleteLink(item) {
+    var classNameEng = 'AssetManager';
+
+    var deleteHtml = '<a href="javascript:void(0)" onclick="toDelete' + classNameEng
+            + '( ' + item.id + ' )">删除</a>';
+
+    return deleteHtml;
+}
+
+// 确认是否删除记录
+function toDeleteAssetManager(id) {
+    var re = confirm('确实要删除这条信息吗？');
+    if (re == true) {
+        var url = "/assetManager/deleteAssetManager";
+        var param = { };
+        put(param, "id", id);
+        var callbackFunctionName = "successCallbackOfDelete";
+        theAjaxSubmit(url, param, callbackFunctionName);
+    }
+}
+
+//删除记录 成功的回调函数
+function successCallbackOfDelete(obj){
+    if(obj.message == "success") {
+        pageForwardWithoutParam("/page/assetmanager/findAssetManager.html");
+    }
+    if (obj.message == "error") {
+        alert("资产管理人仍有资产计划关联,无法删除");
+    }
+}
+
+//格式化 assetManager 状态
+function assetManagerStatusFormatter(status) {
+    if (status == 1) {
+        return '<font color="red">已删除</font>';
+    } else if (status == 2) {
+        return '正常';
+    }
+}
+</script>
+</head>
+<body>
+<div class="tap">
+    <ul>
+        <li><a href="/">首页</a></li>
+        <li><a href="/page/assetmanager/addAssetManager.html">添加资产管理人</a></li>
+    </ul>
+</div>
+<div class="tap-title ">
+    查找资产管理人
+</div>
+<form id="searchForm" method="post" class="form-table">
+<input type="hidden" id="page" name="page" >
+<input type="hidden" id="pageSize"  name="pageSize" >
+<input type="hidden" id="howManyPages" >
+
+<div class="container"><div class="tr-one"><span>
+<label for="111">资产管理人:</label>
+<input type="input" name="name" id="name"  class="input" >
+</span></div></div>
+
+<div class="container"><div class="tr-one"><span>
+<label for="111">资产管理人银行名称:</label>
+<select name="bankName" id="bankName" class="select">
+    <option value="">全部</option>
+    <option value="中国银行">中国银行</option>    
+    <option value="工商银行">工商银行</option>
+    <option value="建设银行">建设银行</option>
+    <option value="招商银行">招商银行</option>
+    <option value="农业银行">农业银行</option>
+    <option value="交通银行">交通银行</option>
+    <option value="光大银行">光大银行</option>
+    <option value="民生银行">民生银行</option>
+    <option value="中信银行">中信银行</option>
+    <option value="华夏银行">华夏银行</option>
+    <option value="兴业银行">兴业银行</option>
+    <option value="平安银行">平安银行</option>
+    <option value="中国邮政储蓄银行">中国邮政储蓄银行</option>
+    <option value="北京银行">北京银行</option>
+    <option value="上海银行">上海银行</option>
+    <option value="南京银行">南京银行</option>
+    <option value="广州银行">广州银行</option>
+    <option value="浦发银行">浦发银行</option>
+    <option value="广发银行股份有限公司">广发银行股份有限公司</option>
+    <option value="杭州银行">杭州银行</option>
+    <option value="大连银行">大连银行</option>
+    <option value="天津银行">天津银行</option>
+    <option value="齐鲁银行">齐鲁银行</option>
+    <option value="渤海银行">渤海银行</option>
+    <option value="江苏银行">江苏银行</option>
+    <option value="青岛银行">青岛银行</option>
+    <option value="长安银行">长安银行</option>
+    <option value="宁波银行">宁波银行</option>
+    <option value="西安银行">西安银行</option>
+    <option value="河北银行">河北银行</option>
+    <option value="廊坊银行">廊坊银行</option>
+    <option value="张家口商行">张家口商行</option>
+    <option value="洛阳银行">洛阳银行</option>
+</select>
+</span></div></div>
+
+<div class="buttons">
+    <input type="button"  value="查找" onclick="searchAssetManager()" class="button">
+    &nbsp;
+    <input type="button"  value="清空" onclick="resetForm('searchForm')" class="button">
+</div>
+</form>
+<div id="resultlist"></div>
+</body>
+</html>

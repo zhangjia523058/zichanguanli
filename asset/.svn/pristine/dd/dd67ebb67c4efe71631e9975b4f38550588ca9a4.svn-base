@@ -1,0 +1,312 @@
+/**
+ * Copyright (C) 2015 Baidu, Inc. All Rights Reserved.
+ */
+package com.baidu.fbu.asset.interceptor;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import net.sf.json.JSONObject;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.server.ServletServerHttpResponse;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.baidu.fbu.common.model.ResultError;
+import com.baidu.fbu.common.service.FormatService;
+import com.baidu.fbu.common.util.DigestUtil;
+import com.baidu.fbu.common.util.RemoteUtil;
+import com.baidu.fbu.asset.constants.Constants.Base;
+
+/**
+ * 权限拦截器.
+ *
+ * @author
+ */
+public class PermissionInterceptor implements HandlerInterceptor {
+    /** log. */
+    private static final Logger LOG = LoggerFactory.getLogger(PermissionInterceptor.class);
+
+    /** converter. */
+    @Autowired
+    private MappingJackson2HttpMessageConverter converter;
+
+    @Override
+    public boolean preHandle(HttpServletRequest request,
+                             HttpServletResponse response, Object handler) throws Exception {
+        String servletPath = request.getServletPath();
+        String token = "";
+        if (servletPath.indexOf("html") >= 0) {
+            if (request.getParameter("token") != null) {
+                token = request.getParameter("token").toString();
+                // 删除cookies中缓存的页码数字
+                Cookie[] cookies = request.getCookies();
+                if (cookies != null) {
+                    for (Cookie cookie : cookies) {
+                        if (!"token".equals(cookie.getName())
+                                && !"username".equals(cookie.getName())
+                                && !"JSESSIONID".equals(cookie.getName())) {
+                            Cookie cookieCover = new Cookie(cookie.getName(), null);
+                            cookieCover.setMaxAge(0);
+                            response.addCookie(cookieCover);
+                        }
+                    }
+                }
+
+                Cookie cookie = new Cookie("token", token);
+                cookie.setPath("/");
+                cookie.setMaxAge(1800);
+                response.addCookie(cookie);
+                String orginalInfoSign = "token" + token + "&key=" + Base.MIS_SIGN;
+                String infoSign = DigestUtil.md5(orginalInfoSign);
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("token", token);
+                params.put("sign", infoSign);
+                String res = null;
+                try {
+                    res = RemoteUtil.post(Base.MIS_GETINFOURL, params);
+                } catch (Exception e) {
+                    LOG.error(FormatService.logFormat("请求mis查询权限失败"), e);
+                    fail(request, response, -1, "请求失败");
+                    return false;
+                }
+                try {
+
+                    JSONObject jsonObject = JSONObject.fromObject(res);
+                    String status = jsonObject.getString("status");
+                    if (!"0".equals(status)) {
+                        fail(request, response, -2, "用户没有权限");
+                    } else {
+                        String username = jsonObject.getString("username");
+                        cookie = new Cookie("username", username);
+                        cookie.setPath("/");
+                        cookie.setMaxAge(1800);
+                        response.addCookie(cookie);
+                        LOG.info(FormatService.logFormat("ServletPath=" + servletPath + "username" + username));
+                    }
+                } catch (Exception e) {
+                    LOG.error(FormatService.logFormat("解析mis返回参数失败"), e);
+                    fail(request, response, -3, "请求失败");
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if ("token".equals(cookie.getName())) {
+                        token = cookie.getValue();
+                    }
+                }
+            }
+        }
+        if (StringUtils.isBlank(token)) {
+            fail(request, response, -4, "用户没有权限");
+            return false;
+        }
+        long timestamp = new Date().getTime();
+        String orginalSign = "app=" + Base.MIS_ASSET + "&timestamp=" + timestamp
+                + "&token=" + token + "&url=" + servletPath + "&key=" + Base.MIS_SIGN;
+        String sign = DigestUtil.md5(orginalSign);
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("app", Base.MIS_ASSET);
+        params.put("timestamp", String.valueOf(timestamp));
+        params.put("token", token);
+        params.put("url", servletPath);
+        params.put("sign", sign);
+        String res = null;
+        try {
+            res = RemoteUtil.post(Base.MIS_CHECKURL, params);
+        } catch (Exception e) {
+            LOG.error(FormatService.logFormat("请求mis查询权限失败"), e);
+            fail(request, response, -5, "请求失败");
+            return false;
+        }
+        boolean bool = true;
+        if (StringUtils.isBlank(res)) {
+            fail(request, response, -6, "请求失败");
+            return false;
+        } else {
+            try {
+                JSONObject jsonObject = JSONObject.fromObject(res);
+                String status = jsonObject.getString("status");
+                if (!"0".equals(status)) {
+                    LOG.error(FormatService.logFormat("mis:" + Base.MIS_CHECKURL
+                            + " return error status:" + status));
+                    fail(request, response, -7, "用户没有权限");
+                    return false;
+                } else {
+                    long resTimestamp = jsonObject.getLong("timestamp");
+                    // 有效时间10秒
+                    if (new Date().getTime() - resTimestamp > 10000) {
+                        fail(request, response, -8, "请求超时");
+                        return false;
+                    } else {
+                        String resOrginalSign = "status=" + status + "&msg="
+                                + jsonObject.getString("msg") + "&timestamp="
+                                + resTimestamp + "&key=" + Base.MIS_SIGN;
+                        String resSign = DigestUtil.md5(resOrginalSign);
+                        if (!resSign.equals(jsonObject.getString("sign"))) {
+                            fail(request, response, -9, "请求失败");
+                            return false;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                LOG.error(FormatService.logFormat("解析mis返回参数失败"), e);
+                fail(request, response, -10, "请求失败");
+                return false;
+            }
+
+            boolean haveCookieUsername = false;
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if (cookie.getName().equals("username") && cookie.getValue() != null) {
+                        haveCookieUsername = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!haveCookieUsername) {
+                String orginalInfoSign = "token=" + token + "&key=" + Base.MIS_SIGN;
+                String infoSign = DigestUtil.md5(orginalInfoSign);
+                params = new HashMap<String, String>();
+                params.put("token", token);
+                params.put("sign", infoSign);
+                try {
+                    res = RemoteUtil.post(Base.MIS_GETINFOURL, params);
+                } catch (Exception e) {
+                    // TODO: handle exception
+                    LOG.error(FormatService.logFormat("请求mis查询权限失败"), e);
+                    fail(request, response, -11, "请求失败");
+                    return false;
+                }
+                try {
+                    JSONObject jsonObject = JSONObject.fromObject(res);
+                    String status = jsonObject.getString("status");
+                    if (!"0".equals(status)) {
+                        fail(request, response, -12, "用户没有权限");
+                        return false;
+                    } else {
+                        String username = jsonObject.getString("username");
+                        Cookie cookie = new Cookie("username", username);
+                        cookie.setPath("/");
+                        cookie.setMaxAge(1800);
+                        response.addCookie(cookie);
+                        LOG.info(FormatService.logFormat("ServletPath="
+                                + servletPath + ", username=" + username));
+                    }
+                } catch (Exception e) {
+                    LOG.error(FormatService.logFormat("解析mis返回参数失败"), e);
+                    fail(request, response, -13, "请求失败");
+                    return false;
+                }
+            }
+        }
+        return bool;
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+                           ModelAndView modelAndView) throws Exception {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+            throws Exception {
+        // TODO Auto-generated method stub
+
+    }
+
+    /**
+     * 错误处理.
+     *
+     * @param response 响应
+     * @param errorCode 错误号
+     * @param errorMsg 错误信息
+     */
+    private void fail(HttpServletRequest request, HttpServletResponse response, int errorCode, String errorMsg) {
+        try {
+            LOG.error(FormatService.logFormat("PermissionFail: errorCode=" + errorCode + ", errorMsg=" + errorMsg));
+
+            // 判断前台是否为Ajax请求
+            boolean ajax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+            String ajaxFlag = null == request.getParameter("ajax") ? "false" : request.getParameter("ajax");
+            boolean isAjax = ajax || ajaxFlag.equalsIgnoreCase("true");
+
+            if (isAjax) { // 是Ajax请求就向前台返回json消息，不是则跳转到无权限页面
+                response.setCharacterEncoding("UTF-8");
+                response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+                converter.write(new ResultError(errorCode, errorMsg), MediaType.APPLICATION_JSON,
+                        new ServletServerHttpResponse(response));
+            } else {
+                String sendRedirectUrl = "/page/otherpages/permissions.html";
+                switch (errorCode) {
+                    case -1:
+                        sendRedirectUrl = "/page/otherpages/500.html";
+                        break;
+                    case -2:
+                        sendRedirectUrl = "/page/otherpages/permissions.html";
+                        break;
+                    case -3:
+                        sendRedirectUrl = "/page/otherpages/500.html";
+                        break;
+                    case -4:
+                        sendRedirectUrl = "/page/otherpages/permissions.html";
+                        break;
+                    case -5:
+                        sendRedirectUrl = "/page/otherpages/500.html";
+                        break;
+                    case -6:
+                        sendRedirectUrl = "/page/otherpages/500.html";
+                        break;
+                    case -7:
+                        sendRedirectUrl = "/page/otherpages/permissions.html";
+                        break;
+                    case -8:
+                        sendRedirectUrl = "/page/otherpages/500.html";
+                        break;
+                    case -9:
+                        sendRedirectUrl = "/page/otherpages/500.html";
+                        break;
+                    case -10:
+                        sendRedirectUrl = "/page/otherpages/500.html";
+                        break;
+                    case -11:
+                        sendRedirectUrl = "/page/otherpages/500.html";
+                        break;
+                    case -12:
+                        sendRedirectUrl = "/page/otherpages/permissions.html";
+                        break;
+                    case -13:
+                        sendRedirectUrl = "/page/otherpages/500.html";
+                        break;
+                    default:
+                        sendRedirectUrl = "/page/otherpages/permissions.html";
+                        break;
+                }
+                response.sendRedirect(sendRedirectUrl);
+            }
+        } catch (Throwable e) {
+            LOG.error(FormatService.logFormat("ajax error"), e);
+        }
+    }
+
+}
